@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-  <title>CellTek — المساعد الذكي</title>
+  <title>CellTek — المساعد الرقمي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -145,9 +145,9 @@
       <span class="brand-name">CellTek</span>
     </div>
     <div class="panel-hero">
-      <p class="panel-label">AI Demo — نسخة تجريبية</p>
-      <h1 class="panel-title">AI-Powered Patient Support</h1>
-      <p class="panel-desc">Experience AI-powered support for CellTek — ask about branch hours, exam preparation, insurance, and appointments in Arabic or English.</p>
+      <p class="panel-label">Demo — نسخة تجريبية</p>
+      <h1 class="panel-title">Patient Support Assistant</h1>
+      <p class="panel-desc">Get instant answers about branch hours, exam preparation, insurance, and appointments in Arabic or English.</p>
     </div>
     <div class="panel-copy">© 2026 CellTek. All rights reserved.</div>
   </div>
@@ -178,7 +178,7 @@
           </div>
           <div class="card-text">
             <span class="card-title">Voice Call — مكالمة صوتية</span>
-            <span class="card-desc">Speak directly in Arabic or English. Chrome recommended.</span>
+            <span class="card-desc">Speak naturally; the assistant will listen and respond in Arabic or English.</span>
           </div>
           <svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
@@ -202,21 +202,21 @@
     <div class="hdr-brand">
       <div class="hdr-icon">C</div>
       <div>
-        <div class="hdr-name">CellTek AI</div>
-        <div class="hdr-sub">المساعد الذكي</div>
+        <div class="hdr-name">CellTek Assistant</div>
+        <div class="hdr-sub">المساعد الرقمي</div>
       </div>
     </div>
     <div class="online-dot"><div class="dot live"></div> Online</div>
   </div>
   <div class="chat-body">
     <div class="chat-intro">
-      <h2>Chat with CellTek AI</h2>
+      <h2>Chat with CellTek Assistant</h2>
       <p>Ask about branches, exams, insurance, booking — باللغة العربية أو الإنجليزية</p>
     </div>
     <div class="chat-messages" id="chat-messages">
       <div class="msg bot">
         <div class="msg-av">C</div>
-        <div class="bubble">مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟ 😊<br/><br/>Hello! I'm CellTek's AI assistant. How can I help you today?</div>
+        <div class="bubble">مرحباً! أنا المساعد الرقمي لـ CellTek. كيف أستطيع مساعدتك اليوم؟ 😊<br/><br/>Hello! I'm CellTek's digital assistant. How can I help you today?</div>
       </div>
     </div>
     <div class="quick-pills" id="quick-pills">
@@ -264,8 +264,8 @@
       <div class="voice-orb" id="v-orb" onclick="toggleVoice()">
         <svg width="44" height="44" viewBox="0 0 24 24" fill="#fff"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.97 3.53 9.11 8.25 9.87V22h3v-4.07C17.47 17.11 21 12.97 21 8h-2c0 4.08-3.05 7.44-7 7.93z"/></svg>
       </div>
-      <div class="voice-name">CellTek AI</div>
-      <div class="voice-role">المساعد الذكي — Patient Support</div>
+      <div class="voice-name">CellTek Assistant</div>
+      <div class="voice-role">المساعد الرقمي — Patient Support</div>
       <div class="voice-status" id="v-status">
         <div class="dot"></div>
         <span id="v-status-txt">Click mic to start — انقر للبدء</span>
@@ -291,96 +291,51 @@
 // KNOWLEDGE BASE — all answers hardcoded
 // ══════════════════════════════════════════
 const KB = [
-  // ── HOURS ──────────────────────────────
-  {
-    keys: ['ساعات','ساعه','مواعيد','وقت','يفتح','يقفل','hours','open','close','working','schedule','timing'],
+  { keys: ['ساعات','ساعه','مواعيد','وقت','يفتح','يقفل','hours','open','close','working','schedule','timing'],
     ar: `فروع CellTek مفتوحة السبت حتى الخميس:\n• مدينة نصر: ٨ ص – ١٠ م\n• المعادي: ٨ ص – ٩ م\n• مصر الجديدة: ٨ ص – ١٠ م\n• السادس من أكتوبر: ٩ ص – ٩ م\n• القاهرة الجديدة: ٨ ص – ١٠ م\nجميع الفروع مغلقة يوم الجمعة.\nفي رمضان: ٩ ص – ٦ م (أكتوبر والمعادي حتى ٥ م).`,
-    en: `CellTek branches are open Saturday to Thursday:\n• Nasr City: 8AM–10PM\n• Maadi: 8AM–9PM\n• Heliopolis: 8AM–10PM\n• 6th October: 9AM–9PM\n• New Cairo: 8AM–10PM\nAll branches are closed on Friday.\nRamadan hours: 9AM–6PM (Maadi & October until 5PM).`
-  },
-  // ── BRANCHES / LOCATIONS ───────────────
-  {
-    keys: ['فرع','فروع','عنوان','مكان','اين','أين','branch','location','address','where','nasr','maadi','heliopolis','october','cairo'],
+    en: `CellTek branches are open Saturday to Thursday:\n• Nasr City: 8AM–10PM\n• Maadi: 8AM–9PM\n• Heliopolis: 8AM–10PM\n• 6th October: 9AM–9PM\n• New Cairo: 8AM–10PM\nAll branches are closed on Friday.\nRamadan hours: 9AM–6PM (Maadi & October until 5PM).` },
+  { keys: ['فرع','فروع','عنوان','مكان','اين','أين','branch','location','address','where','nasr','maadi','heliopolis','october','cairo'],
     ar: `فروع CellTek:\n• مدينة نصر: ٩٠ شارع عباس العقاد\n• المعادي: ١٥ طريق ٩\n• مصر الجديدة: ٣٢ شارع مرغني\n• السادس من أكتوبر: سنترال مول\n• القاهرة الجديدة: شارع التسعين، التجمع الأول\n📞 الخط الموحد: 16789`,
-    en: `CellTek branches:\n• Nasr City: 90 Abbas El-Akkad St\n• Maadi: 15 Road 9\n• Heliopolis: 32 Merghany St\n• 6th October: Central Mall\n• New Cairo: 90th Street, 1st Settlement\n📞 Hotline: 16789`
-  },
-  // ── PHONE / BOOKING ────────────────────
-  {
-    keys: ['رقم','تليفون','هاتف','اتصل','حجز','موعد','phone','number','call','book','appointment','contact','16789'],
+    en: `CellTek branches:\n• Nasr City: 90 Abbas El-Akkad St\n• Maadi: 15 Road 9\n• Heliopolis: 32 Merghany St\n• 6th October: Central Mall\n• New Cairo: 90th Street, 1st Settlement\n📞 Hotline: 16789` },
+  { keys: ['رقم','تليفون','هاتف','اتصل','حجز','موعد','phone','number','call','book','appointment','contact','16789'],
     ar: `يمكنك الحجز أو الاستفسار عبر:\n📞 الخط الموحد: 16789\nمتاح السبت حتى الخميس من ٨ ص إلى ٨ م.\nيمكنك أيضاً زيارة أي فرع مباشرةً.`,
-    en: `To book or inquire:\n📞 Unified hotline: 16789\nAvailable Saturday–Thursday, 8AM–8PM.\nYou can also walk in to any branch.`
-  },
-  // ── MRI PREP ───────────────────────────
-  {
-    keys: ['mri','رنين','رنين مغناطيسي','ريزونانس','استعد','تحضير mri','prepare mri'],
+    en: `To book or inquire:\n📞 Unified hotline: 16789\nAvailable Saturday–Thursday, 8AM–8PM.\nYou can also walk in to any branch.` },
+  { keys: ['mri','رنين','رنين مغناطيسي','ريزونانس','استعد','تحضير mri','prepare mri'],
     ar: `التحضير لفحص الرنين المغناطيسي:\n🧲 رنين المخ/العمود الفقري: لا يلزم صيام. ارتدِ ملابس فضفاضة وأزل جميع المعادن (مجوهرات، ساعات). المدة: ٣٠–٦٠ دقيقة.\n🧲 رنين البطن: صيام ٤–٦ ساعات. المدة: ٤٥–٧٥ دقيقة.\nأبلغ الطاقم إذا كان لديك غرسات معدنية أو ناظم قلب.`,
-    en: `MRI preparation:\n🧲 Brain/Spine MRI: No fasting required. Wear loose clothing, remove all metal (jewelry, watches). Duration: 30–60 min.\n🧲 Abdominal MRI: Fast 4–6 hours before. Duration: 45–75 min.\nAlways inform staff of any metal implants or pacemaker.`
-  },
-  // ── CT PREP ────────────────────────────
-  {
-    keys: ['ct','سكان','مقطعية','computed','tomography','اشعة مقطعية'],
+    en: `MRI preparation:\n🧲 Brain/Spine MRI: No fasting required. Wear loose clothing, remove all metal (jewelry, watches). Duration: 30–60 min.\n🧲 Abdominal MRI: Fast 4–6 hours before. Duration: 45–75 min.\nAlways inform staff of any metal implants or pacemaker.` },
+  { keys: ['ct','سكان','مقطعية','computed','tomography','اشعة مقطعية'],
     ar: `التحضير للأشعة المقطعية:\n💉 بالتباين: صيام ٤ ساعات، أحضر تحليل وظائف الكلى (كرياتينين)، أبلغ الطاقم عن حساسية لليود. المدة: ١٥–٣٠ دقيقة.\n✅ بدون تباين: لا يلزم تحضير. المدة: ١٠–٢٠ دقيقة.`,
-    en: `CT scan preparation:\n💉 With contrast: Fast 4 hours, bring creatinine test, inform staff of iodine allergy. Duration: 15–30 min.\n✅ Without contrast: No preparation needed. Duration: 10–20 min.`
-  },
-  // ── XRAY PREP ──────────────────────────
-  {
-    keys: ['xray','x-ray','اشعة','أشعة سينية','سينية','سنة'],
+    en: `CT scan preparation:\n💉 With contrast: Fast 4 hours, bring creatinine test, inform staff of iodine allergy. Duration: 15–30 min.\n✅ Without contrast: No preparation needed. Duration: 10–20 min.` },
+  { keys: ['xray','x-ray','اشعة','أشعة سينية','سينية','سنة'],
     ar: `الأشعة السينية لا تحتاج تحضيراً خاصاً.\nأزل الإكسسوارات المعدنية من منطقة الفحص. المدة: ٥–١٥ دقيقة.\n⚠️ أبلغ الطاقم إذا كنتِ حاملاً.`,
-    en: `X-Ray requires no special preparation.\nRemove metal accessories from the area being scanned. Duration: 5–15 min.\n⚠️ Inform staff if you are pregnant.`
-  },
-  // ── ULTRASOUND PREP ────────────────────
-  {
-    keys: ['ultrasound','سونار','موجات','echography'],
+    en: `X-Ray requires no special preparation.\nRemove metal accessories from the area being scanned. Duration: 5–15 min.\n⚠️ Inform staff if you are pregnant.` },
+  { keys: ['ultrasound','سونار','موجات','echography'],
     ar: `التحضير للسونار:\n🔵 سونار البطن: صيام ٦–٨ ساعات. المدة: ٢٠–٤٠ دقيقة.\n🔵 سونار الحوض: اشربي لتر ماء قبل ساعة ولا تذهبي للحمام (مثانة ممتلئة). المدة: ٢٠–٣٠ دقيقة.`,
-    en: `Ultrasound preparation:\n🔵 Abdominal: Fast 6–8 hours. Duration: 20–40 min.\n🔵 Pelvic: Drink 1 litre of water 1 hour before and do not urinate (full bladder required). Duration: 20–30 min.`
-  },
-  // ── MAMMOGRAPHY ────────────────────────
-  {
-    keys: ['mammography','ماموغرافي','ثدي','breast'],
+    en: `Ultrasound preparation:\n🔵 Abdominal: Fast 6–8 hours. Duration: 20–40 min.\n🔵 Pelvic: Drink 1 litre of water 1 hour before and do not urinate (full bladder required). Duration: 20–30 min.` },
+  { keys: ['mammography','ماموغرافي','ثدي','breast'],
     ar: `الماموغرافي لا يحتاج تحضيراً خاصاً.\nلا تضعي مزيل عرق أو كريم على منطقة الصدر يوم الفحص.\nيُفضل إجراؤه بعد أسبوع من انتهاء الدورة الشهرية. المدة: ١٥–٢٠ دقيقة.`,
-    en: `Mammography requires no special preparation.\nDo not apply deodorant, powder, or cream to the chest area on the day of the exam.\nBest performed 1 week after the end of your menstrual cycle. Duration: 15–20 min.`
-  },
-  // ── INSURANCE ──────────────────────────
-  {
-    keys: ['تامين','تأمين','بوليصة','insurance','allianz','axa','mednet','bupa','cigna','metlife','globemed','takaful','تكافل','مقبول','يقبل'],
+    en: `Mammography requires no special preparation.\nDo not apply deodorant, powder, or cream to the chest area on the day of the exam.\nBest performed 1 week after the end of your menstrual cycle. Duration: 15–20 min.` },
+  { keys: ['تامين','تأمين','بوليصة','insurance','allianz','axa','mednet','bupa','cigna','metlife','globemed','takaful','تكافل','مقبول','يقبل'],
     ar: `شركات التأمين المقبولة في CellTek:\n✅ أليانز — تغطية كاملة وجزئية (موافقة مسبقة للرنين والمقطعية)\n✅ أكسا — تغطية كاملة وجزئية (موافقة مسبقة للرنين)\n✅ ميدنت — تغطية كاملة، لا تحتاج موافقة مسبقة للخدمات الأساسية\n✅ بيوبا — تغطية كاملة وجزئية\n✅ سيغنا — تغطية كاملة، ٠٪ مشاركة للشبكة الداخلية\n✅ ميتلايف، جلوب ميد، التأمين الصحي الشامل\nللتأكيد اتصل بـ 16789.`,
-    en: `Insurance accepted at CellTek:\n✅ Allianz — Full & partial (pre-approval for MRI/CT)\n✅ AXA — Full & partial (pre-approval for MRI)\n✅ MedNet — Full, no pre-approval for basic services\n✅ Bupa — Full & partial\n✅ Cigna — Full, 0% co-pay in-network\n✅ MetLife, GlobeMed, National Health (Takaful)\nCall 16789 to confirm your coverage.`
-  },
-  // ── PRICING ────────────────────────────
-  {
-    keys: ['سعر','اسعار','أسعار','تكلفة','كم','price','cost','how much','pricing','تمن','ثمن'],
+    en: `Insurance accepted at CellTek:\n✅ Allianz — Full & partial (pre-approval for MRI/CT)\n✅ AXA — Full & partial (pre-approval for MRI)\n✅ MedNet — Full, no pre-approval for basic services\n✅ Bupa — Full & partial\n✅ Cigna — Full, 0% co-pay in-network\n✅ MetLife, GlobeMed, National Health (Takaful)\nCall 16789 to confirm your coverage.` },
+  { keys: ['سعر','اسعار','أسعار','تكلفة','كم','price','cost','how much','pricing','تمن','ثمن'],
     ar: `الأسعار التقريبية بالجنيه المصري:\n🧲 رنين المخ: ١٥٠٠–٢٥٠٠ جنيه\n🧲 رنين البطن: ١٥٠٠–٢٥٠٠ جنيه\n📡 مقطعية بتباين: ٩٠٠–١٨٠٠ جنيه\n📡 مقطعية بدون تباين: ٦٠٠–١٢٠٠ جنيه\n☢️ أشعة سينية: ٨٠–٢٠٠ جنيه\n🔵 سونار البطن: ٣٠٠–٦٠٠ جنيه\n🔵 سونار الحوض: ٢٥٠–٥٠٠ جنيه\n🩺 ماموغرافي: ٤٠٠–٧٠٠ جنيه\nللأسعار الدقيقة اتصل بـ 16789.`,
-    en: `Approximate prices in EGP:\n🧲 MRI Brain: 1,500–2,500\n🧲 MRI Abdomen: 1,500–2,500\n📡 CT with Contrast: 900–1,800\n📡 CT without Contrast: 600–1,200\n☢️ X-Ray: 80–200\n🔵 Ultrasound Abdomen: 300–600\n🔵 Ultrasound Pelvis: 250–500\n🩺 Mammography: 400–700\nFor exact pricing call 16789.`
-  },
-  // ── RESULTS ────────────────────────────
-  {
-    keys: ['نتيجة','نتائج','result','results','report','تقرير','متى تجهز','when ready'],
+    en: `Approximate prices in EGP:\n🧲 MRI Brain: 1,500–2,500\n🧲 MRI Abdomen: 1,500–2,500\n📡 CT with Contrast: 900–1,800\n📡 CT without Contrast: 600–1,200\n☢️ X-Ray: 80–200\n🔵 Ultrasound Abdomen: 300–600\n🔵 Ultrasound Pelvis: 250–500\n🩺 Mammography: 400–700\nFor exact pricing call 16789.` },
+  { keys: ['نتيجة','نتائج','result','results','report','تقرير','متى تجهز','when ready'],
     ar: `النتائج تكون جاهزة خلال ٢٤–٤٨ ساعة.\nيمكن استلامها شخصياً من الفرع، أو إرسالها عبر البريد الإلكتروني إذا طلبت ذلك عند الحجز.\nللحالات العاجلة، أبلغ الموظف عند الحجز.`,
-    en: `Results are usually ready within 24–48 hours.\nYou can collect them in person at the branch, or have them sent by email if requested at booking.\nFor urgent cases, inform staff when booking.`
-  },
-  // ── CHILDREN ───────────────────────────
-  {
-    keys: ['اطفال','أطفال','طفل','children','child','kids','baby'],
+    en: `Results are usually ready within 24–48 hours.\nYou can collect them in person at the branch, or have them sent by email if requested at booking.\nFor urgent cases, inform staff when booking.` },
+  { keys: ['اطفال','أطفال','طفل','children','child','kids','baby'],
     ar: `نعم، نقدم خدمات الأشعة لجميع الفئات العمرية بما فيها الأطفال.\nيرجى إبلاغ الموظف عند الحجز لترتيب الاستقبال المناسب.`,
-    en: `Yes, we provide radiology services for all age groups including children.\nPlease inform staff when booking so we can arrange appropriate care.`
-  },
-  // ── PREGNANCY ──────────────────────────
-  {
-    keys: ['حامل','حمل','pregnant','pregnancy'],
+    en: `Yes, we provide radiology services for all age groups including children.\nPlease inform staff when booking so we can arrange appropriate care.` },
+  { keys: ['حامل','حمل','pregnant','pregnancy'],
     ar: `الرنين المغناطيسي يُعتبر آمناً أثناء الحمل عموماً، خاصةً بعد الشهر الثالث.\nالأشعة السينية والمقطعية تستخدم جرعات منخفضة من الإشعاع — أبلغي الطاقم دائماً إذا كنتِ حاملاً.\nاستشيري طبيبك أولاً في جميع الحالات.`,
-    en: `MRI is generally considered safe during pregnancy, especially after the first trimester.\nX-Ray and CT use low radiation — always inform staff if you are pregnant.\nAlways consult your doctor first.`
-  },
-  // ── PARKING ────────────────────────────
-  {
-    keys: ['parking','موقف','سيارة','park'],
+    en: `MRI is generally considered safe during pregnancy, especially after the first trimester.\nX-Ray and CT use low radiation — always inform staff if you are pregnant.\nAlways consult your doctor first.` },
+  { keys: ['parking','موقف','سيارة','park'],
     ar: `يتوفر موقف سيارات في معظم الفروع.\nاتصل بـ 16789 أو تواصل مع الفرع المحدد للتأكيد.`,
-    en: `Parking is available at most branches.\nCall 16789 or contact the specific branch to confirm.`
-  },
-  // ── GREETING ───────────────────────────
-  {
-    keys: ['مرحبا','هلا','السلام','صباح','مساء','hello','hi','hey','good morning','good evening','greetings'],
-    ar: `مرحباً! أنا المساعد الذكي لـ CellTek 😊\nيمكنني مساعدتك في:\n• مواعيد وعناوين الفروع\n• التحضير للفحوصات (رنين، مقطعية، أشعة، سونار)\n• التأمين الطبي المقبول\n• الأسعار التقريبية\n• حجز المواعيد\nكيف أستطيع مساعدتك؟`,
-    en: `Hello! I'm CellTek's AI assistant 😊\nI can help you with:\n• Branch hours and locations\n• Exam preparation (MRI, CT, X-Ray, Ultrasound)\n• Accepted insurance companies\n• Approximate pricing\n• Appointment booking\nHow can I help you?`
-  }
+    en: `Parking is available at most branches.\nCall 16789 or contact the specific branch to confirm.` },
+  { keys: ['مرحبا','هلا','السلام','صباح','مساء','hello','hi','hey','good morning','good evening','greetings'],
+    ar: `مرحباً! أنا المساعد الرقمي لـ CellTek 😊\nيمكنني مساعدتك في:\n• مواعيد وعناوين الفروع\n• التحضير للفحوصات (رنين، مقطعية، أشعة، سونار)\n• التأمين الطبي المقبول\n• الأسعار التقريبية\n• حجز المواعيد\nكيف أستطيع مساعدتك؟`,
+    en: `Hello! I'm CellTek's digital assistant 😊\nI can help you with:\n• Branch hours and locations\n• Exam preparation (MRI, CT, X-Ray, Ultrasound)\n• Accepted insurance companies\n• Approximate pricing\n• Appointment booking\nHow can I help you?` }
 ];
 
 const FALLBACK = {
@@ -388,7 +343,6 @@ const FALLBACK = {
   en: `I'm sorry, I don't have information about that.\nPlease call our hotline: 📞 16789\nAvailable Saturday–Thursday, 8AM–8PM.`
 };
 
-// ── SMART MATCHER ──────────────────────
 function isArabic(text) { return /[\u0600-\u06FF]/.test(text); }
 
 function getAnswer(text) {
@@ -403,7 +357,6 @@ function getAnswer(text) {
 
 // ══════════════════════════════════════════
 // PAGE ROUTER
-// ══════════════════════════════════════════
 function showPage(name) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
@@ -411,7 +364,6 @@ function showPage(name) {
 
 // ══════════════════════════════════════════
 // CHAT
-// ══════════════════════════════════════════
 function appendMsg(role, text) {
   const box = document.getElementById('chat-messages');
   const d = document.createElement('div');
@@ -440,7 +392,6 @@ function sendChat() {
   document.getElementById('quick-pills').style.display = 'none';
   appendMsg('user', text);
   showTyping();
-  // Simulate natural thinking delay
   setTimeout(() => {
     hideTyping();
     appendMsg('bot', getAnswer(text));
@@ -453,11 +404,30 @@ function sendQ(text) {
 }
 
 // ══════════════════════════════════════════
-// VOICE
-// ══════════════════════════════════════════
+// VOICE with barge-in (interruption) and better voice selection
 let recognition = null;
 let voiceActive = false;
-let aiSpeaking  = false;
+let aiSpeaking = false;
+let mediaStream = null;
+let audioContext = null;
+let sourceNode = null;
+let analyserNode = null;
+let animationId = null;
+let bargeInActive = false;
+let pendingReply = false;
+
+function getPreferredVoice(lang) {
+  const voices = window.speechSynthesis.getVoices();
+  if (lang.startsWith('ar')) {
+    return voices.find(v => v.lang === 'ar-EG' && (v.name.includes('Google') || v.name.includes('Microsoft') || v.name.includes('Sara'))) ||
+           voices.find(v => v.lang === 'ar-EG') ||
+           voices.find(v => v.lang.startsWith('ar'));
+  } else {
+    return voices.find(v => v.lang === 'en-US' && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Zira'))) ||
+           voices.find(v => v.lang === 'en-GB') ||
+           voices.find(v => v.lang.startsWith('en'));
+  }
+}
 
 function setVUI(orbClass, statusClass, statusTxt, btnClass, btnTxt, hdrTxt) {
   document.getElementById('v-orb').className = 'voice-orb ' + orbClass;
@@ -481,98 +451,158 @@ function addTranscript(who, text) {
   box.scrollTop = box.scrollHeight;
 }
 
-function speakText(text, onDone) {
-  window.speechSynthesis.cancel();
-  const u = new SpeechSynthesisUtterance(text);
-  const arabic = isArabic(text);
-  u.lang  = arabic ? 'ar-EG' : 'en-US';
-  u.rate  = 0.92;
-  u.pitch = 1.05;
-  const voices = window.speechSynthesis.getVoices();
-  const v = voices.find(v => arabic
-    ? v.lang.startsWith('ar')
-    : v.lang.startsWith('en') && (v.name.includes('Google') || v.name.includes('Natural') || v.name.includes('Samantha'))
-  );
-  if (v) u.voice = v;
-  u.onend = u.onerror = onDone || (()=>{});
-  window.speechSynthesis.speak(u);
+async function startMicrophoneMonitor() {
+  if (audioContext) return;
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    sourceNode = audioContext.createMediaStreamSource(mediaStream);
+    analyserNode = audioContext.createAnalyser();
+    analyserNode.fftSize = 256;
+    sourceNode.connect(analyserNode);
+    audioContext.resume();
+    monitorVolume();
+  } catch (err) {
+    console.warn("Microphone monitoring failed", err);
+  }
 }
 
-function listenLoop() {
+function stopMicrophoneMonitor() {
+  if (animationId) cancelAnimationFrame(animationId);
+  if (sourceNode) sourceNode.disconnect();
+  if (analyserNode) analyserNode.disconnect();
+  if (audioContext) audioContext.close();
+  if (mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+  audioContext = null; sourceNode = null; analyserNode = null; mediaStream = null;
+}
+
+function monitorVolume() {
+  if (!voiceActive || !analyserNode) return;
+  const dataArray = new Uint8Array(analyserNode.frequencyBinCount);
+  analyserNode.getByteTimeDomainData(dataArray);
+  let maxSample = 0;
+  for (let i = 0; i < dataArray.length; i++) {
+    const v = (dataArray[i] - 128) / 128;
+    maxSample = Math.max(maxSample, Math.abs(v));
+  }
+  // Threshold ~0.03 means moderate speaking
+  if (maxSample > 0.03 && voiceActive && aiSpeaking && !bargeInActive) {
+    bargeInActive = true;
+    // user started talking while AI speaking -> interrupt
+    window.speechSynthesis.cancel();
+    if (recognition) {
+      try { recognition.abort(); } catch(e) {}
+      recognition = null;
+    }
+    aiSpeaking = false;
+    setVUI('ringing','listening','🎤 Listening — يسمعك','end','📵 End Call — إنهاء','Listening');
+    // restart listening immediately
+    startListening();
+  }
+  animationId = requestAnimationFrame(() => monitorVolume());
+}
+
+function speakText(text, onDone) {
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  const arabic = isArabic(text);
+  utterance.lang = arabic ? 'ar-EG' : 'en-US';
+  utterance.rate = 0.92;
+  utterance.pitch = 1.05;
+  const voice = getPreferredVoice(utterance.lang);
+  if (voice) utterance.voice = voice;
+  utterance.onend = () => {
+    aiSpeaking = false;
+    if (onDone) onDone();
+    if (voiceActive && !bargeInActive) {
+      startListening();
+    }
+  };
+  utterance.onerror = () => {
+    aiSpeaking = false;
+    if (onDone) onDone();
+    if (voiceActive) startListening();
+  };
+  aiSpeaking = true;
+  bargeInActive = false;
+  window.speechSynthesis.speak(utterance);
+}
+
+function startListening() {
   if (!voiceActive) return;
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   if (!SR) {
-    const w = document.getElementById('v-warn');
-    w.classList.add('show');
-    w.textContent = '⚠️ Voice not supported on this browser. Please use Chrome or Edge.';
-    stopVoice(); return;
+    document.getElementById('v-warn').classList.add('show');
+    document.getElementById('v-warn').textContent = '⚠️ Voice not supported on this browser. Please use Chrome or Edge.';
+    stopVoice();
+    return;
   }
   recognition = new SR();
   recognition.lang = 'ar-EG';
   recognition.continuous = false;
   recognition.interimResults = false;
-
   recognition.onstart = () => {
     setVUI('ringing','listening','🎤 Listening — يسمعك','end','📵 End Call — إنهاء','Listening');
   };
-
-  recognition.onresult = (e) => {
-    const txt = e.results[0][0].transcript;
-    addTranscript('user', txt);
+  recognition.onresult = async (e) => {
+    const userText = e.results[0][0].transcript;
+    addTranscript('user', userText);
     setVUI('','live','⏳ Thinking — يفكر...','end','📵 End Call — إنهاء','Thinking');
-    const reply = getAnswer(txt);
-    setTimeout(() => {
-      addTranscript('ai', reply);
-      aiSpeaking = true;
-      setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
-      speakText(reply, () => {
-        aiSpeaking = false;
-        if (voiceActive) listenLoop();
-      });
-    }, 400);
+    const reply = getAnswer(userText);
+    addTranscript('ai', reply);
+    setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
+    speakText(reply, () => {});
   };
-
   recognition.onerror = (e) => {
     if (e.error === 'not-allowed') {
       const w = document.getElementById('v-warn');
       w.classList.add('show');
       w.textContent = '⚠️ Microphone access denied. Please allow microphone in browser settings.';
-      stopVoice(); return;
+      stopVoice();
+      return;
     }
-    if (voiceActive && !aiSpeaking) setTimeout(() => listenLoop(), 500);
+    if (voiceActive && !aiSpeaking) setTimeout(() => startListening(), 500);
   };
-
   recognition.onend = () => {
-    if (voiceActive && !aiSpeaking) setTimeout(() => listenLoop(), 300);
+    if (voiceActive && !aiSpeaking && !window.speechSynthesis.speaking) {
+      setTimeout(() => startListening(), 300);
+    }
   };
-
   recognition.start();
+}
+
+function startVoice() {
+  voiceActive = true;
+  document.getElementById('v-warn').classList.remove('show');
+  startMicrophoneMonitor();
+  const greeting = 'مرحباً! أنا المساعد الرقمي لـ CellTek. تحدث معي وسأساعدك.';
+  addTranscript('ai', greeting);
+  setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
+  speakText(greeting, () => {
+    if (voiceActive) startListening();
+  });
+}
+
+function stopVoice() {
+  voiceActive = false;
+  aiSpeaking = false;
+  if (recognition) { try { recognition.abort(); } catch(e){} recognition = null; }
+  window.speechSynthesis.cancel();
+  stopMicrophoneMonitor();
+  setVUI('','','Call ended — انتهت المكالمة','start','🎙️ New Call — مكالمة جديدة','Ready');
 }
 
 function toggleVoice() {
   voiceActive ? stopVoice() : startVoice();
 }
 
-function startVoice() {
-  voiceActive = true;
-  document.getElementById('v-warn').classList.remove('show');
-  const greeting = 'مرحباً! أنا المساعد الذكي لـ CellTek. تحدث معي وسأساعدك.';
-  addTranscript('ai', greeting);
-  aiSpeaking = true;
-  setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
-  speakText(greeting, () => { aiSpeaking = false; listenLoop(); });
-}
-
-function stopVoice() {
-  voiceActive = false; aiSpeaking = false;
-  if (recognition) { try { recognition.abort(); } catch(e){} recognition = null; }
-  window.speechSynthesis.cancel();
-  setVUI('','','Call ended — انتهت المكالمة','start','🎙️ New Call — مكالمة جديدة','Ready');
-}
-
 function stopVoiceAndBack() { stopVoice(); showPage('landing'); }
 
-window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
+window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
 </script>
 </body>
 </html>
