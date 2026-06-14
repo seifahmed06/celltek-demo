@@ -277,4 +277,253 @@
       <div class="voice-role">المساعد الذكي — Patient Support</div>
       <div class="voice-status" id="v-status">
         <div class="dot"></div>
-        <span id="v-sta
+        <span id="v-status-txt">Click mic to start — انقر للبدء</span>
+      </div>
+      <button class="voice-btn start" id="v-btn" onclick="toggleVoice()">
+        🎙️ Start Voice Call — ابدأ المكالمة
+      </button>
+    </div>
+    <div class="warn-box" id="v-warn"></div>
+    <div class="transcript-box" id="v-transcript"></div>
+    <div class="voice-tips" id="v-tips">
+      <h4>💡 Try saying:</h4>
+      <div class="tip"><span>🏥</span><span>ما هي ساعات عمل فرع مدينة نصر؟</span></div>
+      <div class="tip"><span>🧲</span><span>كيف أستعد لفحص الرنين المغناطيسي؟</span></div>
+      <div class="tip"><span>🛡️</span><span>هل تقبلون تأمين Allianz؟</span></div>
+      <div class="tip"><span>📅</span><span>What are your branch hours?</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════
+let chatHistory = [];
+
+function showPage(name) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + name).classList.add('active');
+}
+
+function appendMsg(role, text) {
+  const box = document.getElementById('chat-messages');
+  const d   = document.createElement('div');
+  d.className = 'msg ' + (role === 'user' ? 'user' : 'bot');
+  d.innerHTML = `<div class="msg-av">${role==='user'?'👤':'C'}</div>
+    <div class="bubble">${text.replace(/\n/g,'<br/>')}</div>`;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+
+function showTyping() {
+  const box = document.getElementById('chat-messages');
+  const d   = document.createElement('div');
+  d.className = 'msg bot'; d.id = 'typing';
+  d.innerHTML = `<div class="msg-av">C</div>
+    <div class="bubble typing-bubble"><span></span><span></span><span></span></div>`;
+  box.appendChild(d); box.scrollTop = box.scrollHeight;
+}
+function hideTyping() { const e=document.getElementById('typing'); if(e)e.remove(); }
+
+async function callChat(userText) {
+  chatHistory.push({ role: 'user', content: userText });
+  const res  = await fetch('/api/chat', {
+    method:  'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body:    JSON.stringify({ messages: chatHistory }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Chat error');
+  chatHistory.push({ role: 'assistant', content: data.text });
+  return data.text;
+}
+
+async function sendChat() {
+  const input = document.getElementById('chat-input');
+  const text  = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  document.getElementById('send-btn').disabled = true;
+  document.getElementById('quick-pills').style.display = 'none';
+  appendMsg('user', text);
+  showTyping();
+  try {
+    const reply = await callChat(text);
+    hideTyping();
+    appendMsg('bot', reply);
+  } catch(e) {
+    hideTyping();
+    appendMsg('bot', 'عذراً، حدث خطأ. يرجى المحاولة مجدداً. / Sorry, an error occurred. Please try again.');
+  }
+  document.getElementById('send-btn').disabled = false;
+  document.getElementById('chat-input').focus();
+}
+
+function sendQ(text) {
+  document.getElementById('chat-input').value = text;
+  sendChat();
+}
+
+// ══════════════════════════════════════════
+// TTS — calls /api/tts, plays MP3
+// ══════════════════════════════════════════
+let currentAudio = null;
+
+async function speakElevenLabs(text, onDone) {
+  try {
+    if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+
+    const res = await fetch('/api/tts', {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify({ text }),
+    });
+
+    if (!res.ok) throw new Error('TTS error ' + res.status);
+
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    currentAudio = new Audio(url);
+    currentAudio.onended = () => { URL.revokeObjectURL(url); if(onDone) onDone(); };
+    currentAudio.onerror = () => { if(onDone) onDone(); };
+    await currentAudio.play();
+
+  } catch(e) {
+    console.error('TTS failed:', e);
+    if (onDone) onDone(); // continue voice loop even if TTS fails
+  }
+}
+
+function stopAudio() {
+  if (currentAudio) { currentAudio.pause(); currentAudio = null; }
+}
+
+// ══════════════════════════════════════════
+// VOICE LOOP
+// ══════════════════════════════════════════
+let recognition = null;
+let voiceActive = false;
+let aiSpeaking  = false;
+let voiceHistory = [];
+
+function setVUI(orbCls, statusCls, statusTxt, btnCls, btnTxt, hdrTxt) {
+  document.getElementById('v-orb').className       = 'voice-orb ' + orbCls;
+  document.getElementById('v-status').className    = 'voice-status ' + statusCls;
+  document.getElementById('v-status-txt').textContent = statusTxt;
+  document.getElementById('v-btn').className       = 'voice-btn ' + btnCls;
+  document.getElementById('v-btn').textContent     = btnTxt;
+  document.getElementById('v-hdr-txt').textContent = hdrTxt;
+  const dot = document.querySelector('#v-hdr-dot .dot');
+  dot.className = 'dot ' + (orbCls ? 'live' : '');
+}
+
+function addTranscript(who, text) {
+  const box = document.getElementById('v-transcript');
+  box.classList.add('show');
+  document.getElementById('v-tips').style.display = 'none';
+  const d = document.createElement('div');
+  d.className = 't-line ' + (who==='user'?'user-t':'ai-t');
+  d.textContent = (who==='user'?'👤 أنت: ':'🤖 CellTek: ') + text;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+}
+
+function listenLoop() {
+  if (!voiceActive) return;
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showWarn('⚠️ Voice recognition not supported. Please use Chrome or Edge.\nالمتصفح لا يدعم التعرف على الصوت. استخدم Chrome أو Edge.');
+    stopVoice(); return;
+  }
+
+  recognition = new SR();
+  recognition.lang           = 'ar-EG'; // handles Arabic + English mixed
+  recognition.continuous     = false;
+  recognition.interimResults = false;
+
+  recognition.onstart = () =>
+    setVUI('ringing','listening','🎤 Listening — يسمعك','end','📵 End Call — إنهاء','Listening');
+
+  recognition.onresult = async (e) => {
+    const userText = e.results[0][0].transcript;
+    addTranscript('user', userText);
+    setVUI('','live','⏳ Thinking — يفكر...','end','📵 End Call — إنهاء','Thinking');
+
+    try {
+      voiceHistory.push({ role:'user', content: userText });
+      const res  = await fetch('/api/chat', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ messages: voiceHistory }),
+      });
+      const data = await res.json();
+      const reply = data.text || 'عذراً، لم أتمكن من الرد.';
+      voiceHistory.push({ role:'assistant', content: reply });
+
+      addTranscript('ai', reply);
+      aiSpeaking = true;
+      setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
+
+      await speakElevenLabs(reply, () => {
+        aiSpeaking = false;
+        if (voiceActive) listenLoop();
+      });
+
+    } catch(err) {
+      aiSpeaking = false;
+      if (voiceActive) listenLoop();
+    }
+  };
+
+  recognition.onerror = (e) => {
+    if (e.error === 'not-allowed') {
+      showWarn('⚠️ Microphone access denied.\nيرجى السماح بالوصول للميكروفون في إعدادات المتصفح.');
+      stopVoice(); return;
+    }
+    if (voiceActive && !aiSpeaking) setTimeout(() => listenLoop(), 600);
+  };
+
+  recognition.onend = () => {
+    if (voiceActive && !aiSpeaking) setTimeout(() => listenLoop(), 300);
+  };
+
+  recognition.start();
+}
+
+function showWarn(msg) {
+  const w = document.getElementById('v-warn');
+  w.textContent = msg; w.classList.add('show');
+}
+
+function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
+
+async function startVoice() {
+  voiceActive  = true;
+  voiceHistory = [];
+  document.getElementById('v-warn').classList.remove('show');
+
+  const greeting = 'مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟';
+  addTranscript('ai', greeting);
+  aiSpeaking = true;
+  setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call — إنهاء','Speaking');
+
+  voiceHistory.push({ role:'assistant', content: greeting });
+
+  await speakElevenLabs(greeting, () => {
+    aiSpeaking = false;
+    if (voiceActive) listenLoop();
+  });
+}
+
+function stopVoice() {
+  voiceActive = false; aiSpeaking = false;
+  if (recognition) { try { recognition.abort(); } catch(e){} recognition = null; }
+  stopAudio();
+  setVUI('','','Call ended — انتهت المكالمة','start','🎙️ New Call — مكالمة جديدة','Ready');
+}
+
+function stopVoiceAndBack() { stopVoice(); showPage('landing'); }
+</script>
+</body>
+</html>
