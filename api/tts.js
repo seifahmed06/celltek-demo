@@ -1,38 +1,42 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { text } = req.body;
-
   if (!text || typeof text !== 'string') {
     return res.status(400).json({ error: 'text is required' });
   }
 
-  const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
-  const VOICE_ID           = process.env.ELEVENLABS_VOICE_ID;
+  const apiKey  = process.env.ELEVENLABS_API_KEY;
+  const voiceId = process.env.ELEVENLABS_VOICE_ID;
 
-  if (!ELEVENLABS_API_KEY || !VOICE_ID) {
-    return res.status(500).json({ error: 'ElevenLabs credentials not configured' });
-  }
+  if (!apiKey)   return res.status(500).json({ error: 'ELEVENLABS_API_KEY not set in environment variables' });
+  if (!voiceId)  return res.status(500).json({ error: 'ELEVENLABS_VOICE_ID not set in environment variables' });
 
   try {
     const response = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${VOICE_ID}`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}`,
       {
         method: 'POST',
         headers: {
           'Accept':       'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key':   ELEVENLABS_API_KEY,
+          'xi-api-key':   apiKey,
         },
         body: JSON.stringify({
-          text: text.slice(0, 500), // safety limit
-          model_id: 'eleven_flash_v2_5', // 75ms latency, Arabic supported
+          text:     text.slice(0, 500),
+          model_id: 'eleven_flash_v2_5',
           voice_settings: {
-            stability:        0.50,
-            similarity_boost: 0.75,
-            style:            0.10,
+            stability:         0.50,
+            similarity_boost:  0.75,
+            style:             0.10,
             use_speaker_boost: true,
           },
         }),
@@ -41,17 +45,18 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const errText = await response.text();
+      console.error('ElevenLabs error:', errText);
       return res.status(response.status).json({ error: errText });
     }
 
-    const audioBuffer = await response.arrayBuffer();
-
-    res.setHeader('Content-Type',  'audio/mpeg');
-    res.setHeader('Cache-Control', 'no-store');
-    res.setHeader('Content-Length', audioBuffer.byteLength);
-    return res.send(Buffer.from(audioBuffer));
+    const buffer = await response.arrayBuffer();
+    res.setHeader('Content-Type',   'audio/mpeg');
+    res.setHeader('Cache-Control',  'no-store');
+    res.setHeader('Content-Length', buffer.byteLength);
+    return res.send(Buffer.from(buffer));
 
   } catch (err) {
+    console.error('tts handler error:', err);
     return res.status(500).json({ error: err.message });
   }
-}
+};
