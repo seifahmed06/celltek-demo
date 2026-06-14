@@ -14,11 +14,13 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'text is required' });
   }
 
-  const apiKey  = process.env.ELEVENLABS_API_KEY;
-  const voiceId = process.env.ELEVENLABS_VOICE_ID;
+  const apiKey = process.env.ELEVENLABS_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'ELEVENLABS_API_KEY not set in environment variables' });
+  }
 
-  if (!apiKey)   return res.status(500).json({ error: 'ELEVENLABS_API_KEY not set in environment variables' });
-  if (!voiceId)  return res.status(500).json({ error: 'ELEVENLABS_VOICE_ID not set in environment variables' });
+  // Hardcoded voice ID – your custom voice
+  const voiceId = 'wxweiHvoC2r2jFM7mS8b';
 
   try {
     const response = await fetch(
@@ -26,17 +28,17 @@ module.exports = async function handler(req, res) {
       {
         method: 'POST',
         headers: {
-          'Accept':       'audio/mpeg',
+          'Accept': 'audio/mpeg',
           'Content-Type': 'application/json',
-          'xi-api-key':   apiKey,
+          'xi-api-key': apiKey,
         },
         body: JSON.stringify({
-          text:     text.slice(0, 500),
+          text: text.slice(0, 500),
           model_id: 'eleven_flash_v2_5',
           voice_settings: {
-            stability:         0.50,
-            similarity_boost:  0.75,
-            style:             0.10,
+            stability: 0.50,
+            similarity_boost: 0.75,
+            style: 0.10,
             use_speaker_boost: true,
           },
         }),
@@ -50,8 +52,8 @@ module.exports = async function handler(req, res) {
     }
 
     const buffer = await response.arrayBuffer();
-    res.setHeader('Content-Type',   'audio/mpeg');
-    res.setHeader('Cache-Control',  'no-store');
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Cache-Control', 'no-store');
     res.setHeader('Content-Length', buffer.byteLength);
     return res.send(Buffer.from(buffer));
 
