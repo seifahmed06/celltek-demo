@@ -26,18 +26,18 @@ EXAM PREPARATION:
 - Ultrasound Abdomen: Fast 6–8 hours. 20–40 min.
 - Ultrasound Pelvis: Full bladder — drink 1L water 1hr before, do not urinate. 20–30 min.
 - Mammography: No deodorant/cream on chest. Best 1 week after period ends. 15–20 min.
-- Bone Density (DEXA): No calcium 24hrs before. 15–20 min.
+- Bone Density DEXA: No calcium 24hrs before. 15–20 min.
 - PET-CT: Fast 6hrs. No exercise 24hrs before. Avoid pregnant/children 6hrs after. 2–4 hours.
 
 INSURANCE ACCEPTED:
-- Allianz ✅ Full & Partial — pre-approval for MRI/CT
-- AXA ✅ Full & Partial — pre-approval for MRI
-- MedNet ✅ Full — no pre-approval for basic services
-- Bupa ✅ Full & Partial — confirm before visit
-- GlobeMed ✅ Partial — 20% co-pay, MRI needs pre-approval
-- MetLife ✅ Full & Partial — pre-approval for advanced imaging
-- Cigna ✅ Full — 0% co-pay in-network
-- National Health Takaful ✅ Partial — basic services
+- Allianz: Full & Partial — pre-approval for MRI/CT
+- AXA: Full & Partial — pre-approval for MRI
+- MedNet: Full — no pre-approval for basic services
+- Bupa: Full & Partial — confirm before visit
+- GlobeMed: Partial — 20% co-pay, MRI needs pre-approval
+- MetLife: Full & Partial — pre-approval for advanced imaging
+- Cigna: Full — 0% co-pay in-network
+- National Health Takaful: Partial — basic services
 - Self-Pay / Cash: all services, call 16789 for pricing
 
 PRICES (approximate EGP):
@@ -59,29 +59,39 @@ FAQS:
 - Children: yes, all ages, mention when booking
 - Parking: available at most branches, call 16789 to confirm`;
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
+  // CORS
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
   const { messages } = req.body;
-
   if (!messages || !Array.isArray(messages)) {
     return res.status(400).json({ error: 'messages array is required' });
+  }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in environment variables' });
   }
 
   try {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'x-api-key':         apiKey,
         'anthropic-version': '2023-06-01',
-        'content-type': 'application/json',
+        'content-type':      'application/json',
       },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5',
+        model:      'claude-haiku-4-5',
         max_tokens: 350,
-        system: SYSTEM_PROMPT,
+        system:     SYSTEM_PROMPT,
         messages,
       }),
     });
@@ -89,4 +99,17 @@ export default async function handler(req, res) {
     const data = await response.json();
 
     if (!response.ok) {
-      return res.status(respon
+      console.error('Anthropic error:', data);
+      return res.status(response.status).json({ error: data.error?.message || 'Anthropic API error' });
+    }
+
+    const text = data.content?.[0]?.text;
+    if (!text) return res.status(500).json({ error: 'No text in Anthropic response' });
+
+    return res.status(200).json({ text });
+
+  } catch (err) {
+    console.error('chat handler error:', err);
+    return res.status(500).json({ error: err.message });
+  }
+};
