@@ -1,4 +1,4 @@
-// Knowledge base (identical to your frontend KB)
+// api/chat.js – uses your hardcoded knowledge base, no external API
 const KB = [
   { keys: ['ساعات','ساعه','مواعيد','وقت','يفتح','يقفل','hours','open','close','working','schedule','timing'],
     ar: `فروع CellTek مفتوحة السبت حتى الخميس:\n• مدينة نصر: ٨ ص – ١٠ م\n• المعادي: ٨ ص – ٩ م\n• مصر الجديدة: ٨ ص – ١٠ م\n• السادس من أكتوبر: ٩ ص – ٩ م\n• القاهرة الجديدة: ٨ ص – ١٠ م\nجميع الفروع مغلقة يوم الجمعة.\nفي رمضان: ٩ ص – ٦ م (أكتوبر والمعادي حتى ٥ م).`,
@@ -67,7 +67,7 @@ function getAnswer(text) {
 }
 
 module.exports = async function handler(req, res) {
-  // CORS
+  // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -82,7 +82,7 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'messages array is required' });
   }
 
-  // Get the last user message
+  // Find the last user message
   const lastUserMessage = messages.filter(m => m.role === 'user').pop();
   if (!lastUserMessage) {
     return res.status(400).json({ error: 'No user message found' });
@@ -91,5 +91,6 @@ module.exports = async function handler(req, res) {
   const userText = lastUserMessage.content;
   const reply = getAnswer(userText);
 
+  // Always return a valid JSON with 'text' field
   return res.status(200).json({ text: reply });
 };
