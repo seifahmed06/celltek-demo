@@ -6,7 +6,7 @@
   <title>CellTek — المساعد الذكي</title>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
   <style>
-    /* Your existing CSS – unchanged, keep as is */
+    /* Your existing CSS (unchanged, keep as is) */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     :root{ --blue:#245598; --blue-light:#5bb8f5; --blue-dim:rgba(36,85,152,0.10); --bg:#f4f6fb; --bg-soft:#eef1f8; --border:#e2e8f0; --text:#0f172a; --text-muted:#64748b; --radius:14px; }
     html,body{height:100%;font-family:'Inter','Cairo',sans-serif;background:#000}
@@ -124,7 +124,7 @@
 </head>
 <body>
 
-<!-- LANDING PAGE (unchanged) -->
+<!-- LANDING PAGE -->
 <div class="page active" id="page-landing">
   <div class="panel-left">
     <div class="brand"><div class="brand-icon">C</div><span class="brand-name">CellTek</span></div>
@@ -170,7 +170,7 @@
   </div>
 </div>
 
-<!-- VOICE PAGE with robust fallback -->
+<!-- VOICE PAGE -->
 <div class="page inner-page" id="page-voice">
   <div class="inner-header">
     <button class="back-btn" onclick="stopVoiceAndBack()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
@@ -194,7 +194,7 @@
 </div>
 
 <script>
-// ================= KNOWLEDGE BASE (hardcoded – same as api/chat.js) =================
+// ================= KNOWLEDGE BASE (same as backend) =================
 const KB = [
   { keys: ['ساعات','ساعه','مواعيد','وقت','يفتح','يقفل','hours','open','close','working','schedule','timing'],
     ar: `فروع CellTek مفتوحة السبت حتى الخميس:\n• مدينة نصر: ٨ ص – ١٠ م\n• المعادي: ٨ ص – ٩ م\n• مصر الجديدة: ٨ ص – ١٠ م\n• السادس من أكتوبر: ٩ ص – ٩ م\n• القاهرة الجديدة: ٨ ص – ١٠ م\nجميع الفروع مغلقة يوم الجمعة.\nفي رمضان: ٩ ص – ٦ م (أكتوبر والمعادي حتى ٥ م).`,
@@ -258,110 +258,170 @@ async function callChat(userText){ chatHistory.push({role:'user',content:userTex
 async function sendChat(){ const input=document.getElementById('chat-input'); const text=input.value.trim(); if(!text)return; input.value=''; document.getElementById('send-btn').disabled=true; document.getElementById('quick-pills').style.display='none'; appendMsg('user',text); showTyping(); try{ const reply=await callChat(text); hideTyping(); appendMsg('bot',reply); }catch(e){ hideTyping(); appendMsg('bot','عذراً، حدث خطأ. يرجى المحاولة مجدداً. / Sorry, an error occurred. Please try again.'); } document.getElementById('send-btn').disabled=false; document.getElementById('chat-input').focus(); }
 function sendQ(text){ document.getElementById('chat-input').value=text; sendChat(); }
 
-// ================= VOICE with ElevenLabs + fallback =================
-let recognition=null, voiceActive=false, aiSpeaking=false, currentAudio=null, voiceHistory=[];
-function setVUI(orbCls,statusCls,statusTxt,btnCls,btnTxt,hdrTxt){
-  document.getElementById('v-orb').className='voice-orb '+orbCls;
-  document.getElementById('v-status').className='voice-status '+statusCls;
-  document.getElementById('v-status-txt').textContent=statusTxt;
-  document.getElementById('v-btn').className='voice-btn '+btnCls;
-  document.getElementById('v-btn').textContent=btnTxt;
-  document.getElementById('v-hdr-txt').textContent=hdrTxt;
-  const dot=document.querySelector('#v-hdr-dot .dot');
-  dot.className='dot '+(orbCls?'live':'');
+// ================= VOICE (fixed listening loop) =================
+let recognition = null;
+let voiceActive = false;
+let aiSpeaking = false;
+let currentAudio = null;
+let voiceHistory = [];
+
+function setVUI(orbCls, statusCls, statusTxt, btnCls, btnTxt, hdrTxt) {
+  document.getElementById('v-orb').className = 'voice-orb ' + orbCls;
+  document.getElementById('v-status').className = 'voice-status ' + statusCls;
+  document.getElementById('v-status-txt').textContent = statusTxt;
+  document.getElementById('v-btn').className = 'voice-btn ' + btnCls;
+  document.getElementById('v-btn').textContent = btnTxt;
+  document.getElementById('v-hdr-txt').textContent = hdrTxt;
+  const dot = document.querySelector('#v-hdr-dot .dot');
+  dot.className = 'dot ' + (orbCls ? 'live' : '');
 }
-function addTranscript(who,text){
-  const box=document.getElementById('v-transcript');
+
+function addTranscript(who, text) {
+  const box = document.getElementById('v-transcript');
   box.classList.add('show');
-  document.getElementById('v-tips').style.display='none';
-  const d=document.createElement('div');
-  d.className='t-line '+(who==='user'?'user-t':'ai-t');
-  d.textContent=(who==='user'?'👤 أنت: ':'🤖 CellTek: ')+text;
+  document.getElementById('v-tips').style.display = 'none';
+  const d = document.createElement('div');
+  d.className = 't-line ' + (who === 'user' ? 'user-t' : 'ai-t');
+  d.textContent = (who === 'user' ? '👤 أنت: ' : '🤖 CellTek: ') + text;
   box.appendChild(d);
-  box.scrollTop=box.scrollHeight;
+  box.scrollTop = box.scrollHeight;
 }
-function stopAudio(){ if(currentAudio){ currentAudio.pause(); currentAudio=null; } }
-// Fallback using browser speech synthesis
-function speakFallback(text, onDone){
+
+function stopAudio() { if (currentAudio) { currentAudio.pause(); currentAudio = null; } }
+
+// Fallback TTS
+function speakFallback(text, onDone) {
   window.speechSynthesis.cancel();
-  const utter=new SpeechSynthesisUtterance(text);
-  const arabic=isArabic(text);
-  utter.lang=arabic?'ar-EG':'en-US';
-  utter.rate=0.9;
-  utter.pitch=1.0;
-  utter.onend=()=>{ aiSpeaking=false; if(onDone) onDone(); if(voiceActive) startListening(); };
-  utter.onerror=()=>{ aiSpeaking=false; if(onDone) onDone(); if(voiceActive) startListening(); };
-  aiSpeaking=true;
+  const utter = new SpeechSynthesisUtterance(text);
+  const arabic = isArabic(text);
+  utter.lang = arabic ? 'ar-EG' : 'en-US';
+  utter.rate = 0.9;
+  utter.pitch = 1.0;
+  utter.onend = () => { aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
+  utter.onerror = () => { aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
+  aiSpeaking = true;
   window.speechSynthesis.speak(utter);
 }
-// ElevenLabs TTS with fallback on failure
-async function speakElevenLabs(text, onDone){
+
+// ElevenLabs TTS
+async function speakElevenLabs(text, onDone) {
   stopAudio();
-  try{
-    const res=await fetch('/api/tts',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
-    if(!res.ok)throw new Error('TTS HTTP '+res.status);
-    const blob=await res.blob();
-    const url=URL.createObjectURL(blob);
-    const audio=new Audio(url);
-    currentAudio=audio;
-    audio.onended=()=>{ URL.revokeObjectURL(url); currentAudio=null; aiSpeaking=false; if(onDone) onDone(); if(voiceActive) startListening(); };
-    audio.onerror=()=>{ URL.revokeObjectURL(url); currentAudio=null; aiSpeaking=false; if(onDone) onDone(); if(voiceActive) startListening(); };
-    aiSpeaking=true;
+  try {
+    const res = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
+    if (!res.ok) throw new Error('TTS HTTP ' + res.status);
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const audio = new Audio(url);
+    currentAudio = audio;
+    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
+    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
+    aiSpeaking = true;
     await audio.play();
-  }catch(err){
+  } catch (err) {
     console.warn('ElevenLabs failed, using fallback TTS:', err);
     speakFallback(text, onDone);
   }
 }
-function startListening(){
-  if(!voiceActive)return;
-  if(recognition){ try{ recognition.abort(); }catch(e){} recognition=null; }
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){ showWarn('⚠️ Voice not supported. Use Chrome/Edge.'); stopVoice(); return; }
-  recognition=new SR();
-  recognition.lang='ar-EG';
-  recognition.continuous=false;
-  recognition.interimResults=false;
-  recognition.onstart=()=>setVUI('ringing','listening','🎤 Listening — يسمعك','end','📵 End Call','Listening');
-  recognition.onresult=async (e)=>{
-    const userText=e.results[0][0].transcript;
-    addTranscript('user',userText);
-    setVUI('','live','⏳ Thinking — يفكر...','end','📵 End Call','Thinking');
-    try{
-      voiceHistory.push({role:'user',content:userText});
-      const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:voiceHistory})});
-      const data=await res.json();
-      const reply=data.text||'عذراً، لم أتمكن من الرد.';
-      voiceHistory.push({role:'assistant',content:reply});
-      addTranscript('ai',reply);
-      setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call','Speaking');
-      await speakElevenLabs(reply, ()=>{ if(voiceActive) startListening(); });
-    }catch(err){ console.error('Voice chat error:',err); if(voiceActive) startListening(); }
+
+// Start listening – ensures previous recognition is cleaned up
+function startListening() {
+  if (!voiceActive) return;
+  if (recognition) {
+    try { recognition.abort(); } catch(e) {}
+    recognition = null;
+  }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    showWarn('⚠️ Voice not supported. Use Chrome/Edge.');
+    stopVoice();
+    return;
+  }
+  recognition = new SR();
+  recognition.lang = 'ar-EG';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  
+  recognition.onstart = () => {
+    console.log('Listening started');
+    setVUI('ringing', 'listening', '🎤 Listening — يسمعك', 'end', '📵 End Call', 'Listening');
   };
-  recognition.onerror=(e)=>{ if(e.error==='not-allowed'){ showWarn('⚠️ Microphone access denied.'); stopVoice(); } else if(voiceActive && !aiSpeaking) setTimeout(()=>startListening(),500); };
-  recognition.onend=()=>{ if(voiceActive && !aiSpeaking) setTimeout(()=>startListening(),300); };
+  
+  recognition.onresult = async (e) => {
+    const userText = e.results[0][0].transcript;
+    console.log('User said:', userText);
+    addTranscript('user', userText);
+    setVUI('', 'live', '⏳ Thinking — يفكر...', 'end', '📵 End Call', 'Thinking');
+    
+    try {
+      voiceHistory.push({ role: 'user', content: userText });
+      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: voiceHistory }) });
+      const data = await res.json();
+      const reply = data.text || 'عذراً، لم أتمكن من الرد.';
+      voiceHistory.push({ role: 'assistant', content: reply });
+      addTranscript('ai', reply);
+      setVUI('speaking', 'speaking-ai', '🔊 Speaking — يتكلم', 'end', '📵 End Call', 'Speaking');
+      await speakElevenLabs(reply, () => {
+        // After speaking, restart listening if still active
+        if (voiceActive && !aiSpeaking) startListening();
+      });
+    } catch (err) {
+      console.error('Voice chat error:', err);
+      if (voiceActive) startListening();
+    }
+  };
+  
+  recognition.onerror = (e) => {
+    console.error('Recognition error:', e.error);
+    if (e.error === 'not-allowed') {
+      showWarn('⚠️ Microphone access denied. Please allow microphone access.');
+      stopVoice();
+    } else if (voiceActive && !aiSpeaking) {
+      // Retry after a short delay
+      setTimeout(() => { if (voiceActive) startListening(); }, 500);
+    }
+  };
+  
+  recognition.onend = () => {
+    console.log('Recognition ended');
+    if (voiceActive && !aiSpeaking && !currentAudio && !window.speechSynthesis.speaking) {
+      setTimeout(() => { if (voiceActive) startListening(); }, 300);
+    }
+  };
+  
   recognition.start();
 }
-function showWarn(msg){ const w=document.getElementById('v-warn'); w.textContent=msg; w.classList.add('show'); setTimeout(()=>w.classList.remove('show'),5000); }
-async function startVoice(){
-  voiceActive=true;
-  voiceHistory=[];
-  document.getElementById('v-warn').classList.remove('show');
-  const greeting='مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟';
-  addTranscript('ai',greeting);
-  voiceHistory.push({role:'assistant',content:greeting});
-  setVUI('speaking','speaking-ai','🔊 Speaking — يتكلم','end','📵 End Call','Speaking');
-  await speakElevenLabs(greeting, ()=>{ if(voiceActive) startListening(); });
+
+function showWarn(msg) {
+  const w = document.getElementById('v-warn');
+  w.textContent = msg;
+  w.classList.add('show');
+  setTimeout(() => w.classList.remove('show'), 5000);
 }
-function stopVoice(){
-  voiceActive=false; aiSpeaking=false;
-  if(recognition){ try{ recognition.abort(); }catch(e){} recognition=null; }
+
+async function startVoice() {
+  voiceActive = true;
+  voiceHistory = [];
+  document.getElementById('v-warn').classList.remove('show');
+  const greeting = 'مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟';
+  addTranscript('ai', greeting);
+  voiceHistory.push({ role: 'assistant', content: greeting });
+  setVUI('speaking', 'speaking-ai', '🔊 Speaking — يتكلم', 'end', '📵 End Call', 'Speaking');
+  await speakElevenLabs(greeting, () => {
+    if (voiceActive) startListening();
+  });
+}
+
+function stopVoice() {
+  voiceActive = false;
+  aiSpeaking = false;
+  if (recognition) { try { recognition.abort(); } catch(e) {} recognition = null; }
   window.speechSynthesis.cancel();
   stopAudio();
-  setVUI('','','Call ended — انتهت المكالمة','start','🎙️ New Call — مكالمة جديدة','Ready');
+  setVUI('', '', 'Call ended — انتهت المكالمة', 'start', '🎙️ New Call — مكالمة جديدة', 'Ready');
 }
-function toggleVoice(){ voiceActive?stopVoice():startVoice(); }
-function stopVoiceAndBack(){ stopVoice(); showPage('landing'); }
+
+function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
+function stopVoiceAndBack() { stopVoice(); showPage('landing'); }
 </script>
 </body>
 </html>
