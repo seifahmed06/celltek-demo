@@ -1,7 +1,11 @@
 {
-  "name": "celltek-demo",
+  "name": "celltek-ai-demo",
   "version": "1.0.0",
   "engines": {
     "node": "24.x"
-  }
+  },
+  "scripts": {
+    "start": "node api/chat.js"
+  },
+  "dependencies": {}
 }
