@@ -1,427 +1,1359 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
-  <meta charset="UTF-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
-  <title>CellTek — المساعد الذكي</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-  <style>
-    /* Your existing CSS (unchanged, keep as is) */
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{ --blue:#245598; --blue-light:#5bb8f5; --blue-dim:rgba(36,85,152,0.10); --bg:#f4f6fb; --bg-soft:#eef1f8; --border:#e2e8f0; --text:#0f172a; --text-muted:#64748b; --radius:14px; }
-    html,body{height:100%;font-family:'Inter','Cairo',sans-serif;background:#000}
-    .page{display:none;min-height:100dvh}
-    .page.active{display:flex}
-    #page-landing{flex-direction:column}
-    @media(min-width:768px){#page-landing{flex-direction:row}}
-    .panel-left{position:relative;display:none;flex-direction:column;justify-content:space-between;padding:56px;background:var(--blue);color:#fff;overflow:hidden}
-    @media(min-width:768px){.panel-left{display:flex;width:50%}}
-    @media(min-width:1024px){.panel-left{width:55%}}
-    .panel-left::before{content:'';position:absolute;top:-96px;right:-96px;width:320px;height:320px;border-radius:50%;background:rgba(255,255,255,0.05)}
-    .panel-left::after{content:'';position:absolute;bottom:-128px;left:-80px;width:384px;height:384px;border-radius:50%;background:rgba(255,255,255,0.04)}
-    .panel-left>*{position:relative;z-index:1}
-    .brand{display:inline-flex;align-items:center;gap:12px}
-    .brand-icon{width:48px;height:48px;border-radius:50%;background:var(--blue-light);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:22px;color:#fff;box-shadow:0 2px 12px rgba(0,0,0,0.18)}
-    .brand-name{font-size:20px;font-weight:600;color:#fff;letter-spacing:.02em}
-    .panel-hero{max-width:420px}
-    .panel-label{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:16px}
-    .panel-title{font-size:clamp(28px,3vw,38px);font-weight:600;line-height:1.25;color:#fff}
-    .panel-desc{margin-top:20px;color:rgba(255,255,255,.80);line-height:1.7;font-size:15px}
-    .panel-copy{font-size:12px;color:rgba(255,255,255,.45)}
-    .panel-right{flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:40px 24px}
-    .mobile-brand{display:flex;justify-content:center;margin-bottom:40px}
-    @media(min-width:768px){.mobile-brand{display:none}}
-    .mob-icon{width:40px;height:40px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;color:#fff}
-    .mob-name{font-size:17px;font-weight:600;color:var(--text);margin-left:10px;line-height:40px}
-    .form-box{width:100%;max-width:420px}
-    .form-title{font-size:clamp(22px,3vw,28px);font-weight:600;color:var(--text);margin-bottom:4px}
-    .form-sub{font-size:13px;color:var(--text-muted);margin-bottom:32px;line-height:1.6}
-    .form-sub strong{color:var(--text);font-weight:500}
-    .mode-cards{display:flex;flex-direction:column;gap:14px}
-    .mode-card{display:flex;align-items:center;gap:16px;padding:18px 20px;border:1.5px solid var(--border);border-radius:var(--radius);background:#fff;cursor:pointer;text-align:left;width:100%;font-family:inherit;transition:all .18s}
-    .mode-card:hover{border-color:rgba(36,85,152,.45);background:var(--bg-soft);box-shadow:0 2px 12px rgba(36,85,152,.08)}
-    .card-icon{flex-shrink:0;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--blue-dim);color:var(--blue)}
-    .card-text{flex:1;min-width:0}
-    .card-title{font-size:15px;font-weight:600;color:var(--text);display:block}
-    .card-desc{font-size:13px;color:var(--text-muted);margin-top:3px;display:block}
-    .card-arrow{color:var(--text-muted);flex-shrink:0;transition:color .18s}
-    .mode-card:hover .card-arrow{color:var(--blue)}
-    .form-footer{margin-top:36px;display:flex;align-items:center;justify-content:space-between;font-size:12px}
-    .form-footer-label{color:var(--text-muted)}
-    .powered{display:flex;align-items:center;gap:6px;color:var(--text-muted)}
-    .inner-page{flex-direction:column;min-height:100dvh;background:var(--bg)}
-    .inner-header{display:flex;align-items:center;gap:14px;padding:16px 24px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
-    .back-btn{display:flex;align-items:center;gap:6px;background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:13px;font-family:inherit;padding:6px 10px;border-radius:8px;transition:all .15s}
-    .back-btn:hover{background:var(--bg);color:var(--blue)}
-    .hdr-div{width:1px;height:24px;background:var(--border)}
-    .hdr-brand{display:flex;align-items:center;gap:10px}
-    .hdr-icon{width:36px;height:36px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:#fff}
-    .hdr-name{font-weight:600;font-size:15px;color:var(--text)}
-    .hdr-sub{font-size:12px;color:var(--text-muted)}
-    .online-dot{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12px;color:#16a34a;font-weight:500}
-    .dot{width:8px;height:8px;border-radius:50%;background:currentColor}
-    @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
-    .dot.live{animation:blink 1.4s infinite}
-    .chat-body{flex:1;display:flex;flex-direction:column;align-items:center;padding:28px 16px;max-width:680px;width:100%;margin:0 auto}
-    .chat-intro{text-align:center;margin-bottom:24px}
-    .chat-intro h2{font-size:20px;font-weight:600;color:var(--text)}
-    .chat-intro p{font-size:14px;color:var(--text-muted);margin-top:6px;line-height:1.6}
-    .chat-messages{width:100%;display:flex;flex-direction:column;gap:12px;margin-bottom:18px;min-height:260px}
-    .msg{display:flex;gap:10px;align-items:flex-end;animation:fadeUp .22s ease}
-    @keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-    .msg.user{flex-direction:row-reverse}
-    .msg-av{width:32px;height:32px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700}
-    .msg.bot .msg-av{background:var(--blue);color:#fff}
-    .msg.user .msg-av{background:var(--bg-soft);font-size:17px}
-    .bubble{max-width:78%;padding:11px 16px;border-radius:18px;font-size:14px;line-height:1.65}
-    .msg.bot .bubble{background:#fff;color:var(--text);border-bottom-left-radius:4px;box-shadow:0 1px 4px rgba(0,0,0,.07)}
-    .msg.user .bubble{background:var(--blue);color:#fff;border-bottom-right-radius:4px}
-    .typing-bubble{display:flex;gap:5px;padding:14px 18px}
-    .typing-bubble span{width:7px;height:7px;background:var(--text-muted);border-radius:50%;animation:bounce 1.2s infinite}
-    .typing-bubble span:nth-child(2){animation-delay:.2s}
-    .typing-bubble span:nth-child(3){animation-delay:.4s}
-    @keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
-    .quick-pills{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:18px}
-    .pill{background:#fff;border:1.5px solid var(--border);color:var(--blue);font-size:13px;font-family:inherit;padding:7px 14px;border-radius:20px;cursor:pointer;transition:all .15s}
-    .pill:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
-    .chat-input-row{display:flex;gap:10px;width:100%}
-    .chat-input{flex:1;padding:13px 18px;border:1.5px solid var(--border);border-radius:24px;font-size:14px;font-family:inherit;background:#fff;color:var(--text);outline:none;transition:border-color .15s;direction:auto}
-    .chat-input:focus{border-color:var(--blue)}
-    .chat-input::placeholder{color:var(--text-muted)}
-    .send-btn{width:48px;height:48px;border-radius:50%;background:var(--blue);border:none;flex-shrink:0;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s}
-    .send-btn:hover{background:#1a3f7a}
-    .voice-body{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 16px;gap:28px}
-    .voice-card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:40px 36px;max-width:400px;width:100%;text-align:center;box-shadow:0 4px 24px rgba(36,85,152,.08)}
-    .voice-orb{width:100px;height:100px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;cursor:pointer;transition:box-shadow .3s}
-    @keyframes pulse-ring{0%{box-shadow:0 0 0 0 rgba(36,85,152,.4)}70%{box-shadow:0 0 0 20px rgba(36,85,152,0)}100%{box-shadow:0 0 0 0 rgba(36,85,152,0)}}
-    @keyframes pulse-speak{from{box-shadow:0 0 0 4px rgba(36,85,152,.3)}to{box-shadow:0 0 0 22px rgba(36,85,152,.05)}}
-    .voice-orb.ringing{animation:pulse-ring 1.5s infinite}
-    .voice-orb.speaking{animation:pulse-speak .9s infinite alternate}
-    .voice-name{font-size:22px;font-weight:700;color:var(--text);margin-bottom:4px}
-    .voice-role{font-size:14px;color:var(--text-muted);margin-bottom:20px}
-    .voice-status{display:inline-flex;align-items:center;gap:8px;font-size:14px;font-weight:500;background:var(--bg);border-radius:20px;padding:8px 18px;margin-bottom:24px;color:var(--text-muted);transition:all .3s}
-    .voice-status.listening{color:#1d4ed8;background:#eff6ff}
-    .voice-status.live{color:#15803d;background:#f0fdf4}
-    .voice-status.speaking-ai{color:#7c3aed;background:#f5f3ff}
-    .voice-btn{width:100%;padding:14px;border-radius:12px;border:none;font-size:15px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .18s}
-    .voice-btn.start{background:var(--blue);color:#fff}
-    .voice-btn.start:hover{background:#1a3f7a}
-    .voice-btn.end{background:#fef2f2;color:#dc2626;border:1.5px solid #fecaca}
-    .voice-btn.end:hover{background:#fee2e2}
-    .voice-tips{max-width:400px;width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:20px}
-    .voice-tips h4{font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px}
-    .tip{display:flex;gap:10px;font-size:13px;color:var(--text-muted);line-height:1.5;margin-bottom:8px}
-    .transcript-box{max-width:400px;width:100%;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:16px;max-height:180px;overflow-y:auto;display:none}
-    .transcript-box.show{display:block}
-    .t-line{font-size:13px;line-height:1.6;margin-bottom:6px;padding:4px 0;border-bottom:1px solid var(--border)}
-    .t-line:last-child{border-bottom:none}
-    .t-line.user-t{color:var(--blue);font-weight:500}
-    .t-line.ai-t{color:var(--text)}
-    .warn-box{background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:12px 16px;font-size:13px;color:#92400e;max-width:400px;width:100%;text-align:center;display:none;line-height:1.6}
-    .warn-box.show{display:block}
-    .tts-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--text-muted);background:var(--bg-soft);border:1px solid var(--border);border-radius:10px;padding:4px 10px;margin-bottom:16px}
-  </style>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CellTek AI — Chat & Voice Assistant</title>
+
+    <!-- ===== Fonts & Icons ===== -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+    <style>
+        /* ============================================================
+               GLOBAL RESET & BASE
+               ============================================================ */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #0b5e7c;
+            --primary-light: #e8f4f9;
+            --primary-dark: #06445a;
+            --accent: #f39c12;
+            --bg: #f7fbfd;
+            --card-bg: #ffffff;
+            --text: #1a2a3a;
+            --text-light: #4a6a7a;
+            --border: #dce8ed;
+            --shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            --radius: 18px;
+            --radius-sm: 12px;
+            --transition: 0.25s ease;
+            --font: 'Inter', -apple-system, system-ui, sans-serif;
+        }
+
+        html {
+            font-family: var(--font);
+            background: var(--bg);
+            color: var(--text);
+            scroll-behavior: smooth;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: linear-gradient(145deg, #f0f8fc 0%, #e2eef6 100%);
+        }
+
+        /* ============================================================
+               APP CONTAINER
+               ============================================================ */
+        .app {
+            width: 100%;
+            max-width: 820px;
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow), 0 20px 60px rgba(11, 94, 124, 0.08);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 80vh;
+            max-height: 96vh;
+            transition: min-height 0.3s;
+            position: relative;
+        }
+
+        /* ============================================================
+               HEADER
+               ============================================================ */
+        .app-header {
+            background: var(--primary);
+            color: #fff;
+            padding: 18px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .app-header .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .app-header .brand i {
+            font-size: 26px;
+            color: var(--accent);
+        }
+
+        .app-header .brand h1 {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        .app-header .brand small {
+            display: block;
+            font-size: 11px;
+            font-weight: 400;
+            opacity: 0.8;
+            margin-top: 1px;
+        }
+
+        .mode-toggle {
+            display: flex;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.12);
+            padding: 4px;
+            border-radius: 40px;
+        }
+
+        .mode-toggle button {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .mode-toggle button i {
+            font-size: 14px;
+        }
+
+        .mode-toggle button.active {
+            background: #fff;
+            color: var(--primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .mode-toggle button:hover:not(.active) {
+            color: #fff;
+        }
+
+        /* ============================================================
+               MAIN CONTENT AREA
+               ============================================================ */
+        .main-area {
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ============================================================
+               CHAT VIEW
+               ============================================================ */
+        .view {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 0 24px 20px;
+        }
+
+        .view.active {
+            display: flex;
+        }
+
+        /* ---- chat messages ---- */
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 0 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            scroll-behavior: smooth;
+        }
+
+        .chat-messages .message {
+            max-width: 82%;
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            line-height: 1.6;
+            font-size: 15px;
+            word-wrap: break-word;
+            animation: fadeSlideUp 0.3s ease;
+        }
+
+        .chat-messages .message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: #fff;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-messages .message.assistant {
+            align-self: flex-start;
+            background: var(--primary-light);
+            color: var(--text);
+            border-bottom-left-radius: 4px;
+            border: 1px solid rgba(11, 94, 124, 0.08);
+        }
+
+        .chat-messages .message.assistant .lang-badge {
+            display: inline-block;
+            font-size: 10px;
+            font-weight: 600;
+            background: rgba(11, 94, 124, 0.10);
+            padding: 1px 10px;
+            border-radius: 20px;
+            margin-bottom: 6px;
+            color: var(--primary);
+            letter-spacing: 0.3px;
+        }
+
+        .chat-messages .typing {
+            align-self: flex-start;
+            background: var(--primary-light);
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            border-bottom-left-radius: 4px;
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .chat-messages .typing span {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: var(--primary);
+            border-radius: 50%;
+            animation: pulseDot 1.4s infinite ease-in-out both;
+        }
+        .chat-messages .typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .chat-messages .typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes pulseDot {
+            0%,
+            80%,
+            100% {
+                transform: scale(0.6);
+                opacity: 0.4;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeSlideUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ---- quick pills ---- */
+        .quick-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px 0 12px;
+            flex-shrink: 0;
+        }
+
+        .quick-pills button {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 6px 16px;
+            border-radius: 40px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: var(--font);
+            white-space: nowrap;
+        }
+
+        .quick-pills button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* ---- chat input ---- */
+        .chat-input-row {
+            display: flex;
+            gap: 10px;
+            padding: 12px 0 6px;
+            border-top: 1px solid var(--border);
+            flex-shrink: 0;
+            background: var(--card-bg);
+        }
+
+        .chat-input-row input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1.5px solid var(--border);
+            border-radius: 40px;
+            font-size: 15px;
+            font-family: var(--font);
+            outline: none;
+            transition: var(--transition);
+            background: var(--bg);
+        }
+
+        .chat-input-row input:focus {
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(11, 94, 124, 0.08);
+        }
+
+        .chat-input-row button {
+            background: var(--primary);
+            border: none;
+            color: #fff;
+            width: 50px;
+            border-radius: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .chat-input-row button:hover {
+            background: var(--primary-dark);
+            transform: scale(1.02);
+        }
+
+        .chat-input-row button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* ============================================================
+               VOICE VIEW
+               ============================================================ */
+        .voice-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0 10px;
+            gap: 18px;
+        }
+
+        .voice-orb {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, #0b5e7c, #06445a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 52px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 40px rgba(11, 94, 124, 0.25);
+            position: relative;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .voice-orb .pulse-ring {
+            position: absolute;
+            inset: -12px;
+            border-radius: 50%;
+            border: 2px solid rgba(11, 94, 124, 0.15);
+            animation: pulseRing 2s infinite ease-out;
+        }
+
+        .voice-orb .pulse-ring:nth-child(2) {
+            animation-delay: 0.7s;
+        }
+
+        @keyframes pulseRing {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.8;
+            }
+            100% {
+                transform: scale(1.25);
+                opacity: 0;
+            }
+        }
+
+        .voice-orb:hover {
+            transform: scale(1.04);
+            box-shadow: 0 12px 50px rgba(11, 94, 124, 0.35);
+        }
+
+        .voice-orb.listening {
+            background: radial-gradient(circle at 30% 30%, #e67e22, #d35400);
+            box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.4);
+            animation: listenPulse 1.2s infinite ease-in-out;
+        }
+
+        @keyframes listenPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(211, 84, 0, 0.3);
+            }
+            50% {
+                box-shadow: 0 0 0 25px rgba(211, 84, 0, 0);
+            }
+        }
+
+        .voice-orb.speaking {
+            background: radial-gradient(circle at 30% 30%, #27ae60, #1e8449);
+            box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.3);
+            animation: speakPulse 1s infinite ease-in-out;
+        }
+
+        @keyframes speakPulse {
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(39, 174, 96, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 0 30px rgba(39, 174, 96, 0);
+            }
+        }
+
+        .voice-orb .icon-wrap {
+            position: relative;
+            z-index: 2;
+        }
+
+        .voice-orb .status-label {
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-light);
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 4px 16px;
+            border-radius: 30px;
+            backdrop-filter: blur(4px);
+            border: 1px solid var(--border);
+        }
+
+        .voice-transcript {
+            width: 100%;
+            max-width: 500px;
+            max-height: 200px;
+            overflow-y: auto;
+            background: var(--bg);
+            border-radius: var(--radius-sm);
+            padding: 16px 20px;
+            font-size: 14px;
+            line-height: 1.7;
+            border: 1px solid var(--border);
+            min-height: 70px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .voice-transcript .entry {
+            display: flex;
+            gap: 10px;
+            align-items: baseline;
+            padding: 4px 0;
+        }
+
+        .voice-transcript .entry .who {
+            font-weight: 600;
+            font-size: 12px;
+            color: var(--primary);
+            min-width: 48px;
+        }
+
+        .voice-transcript .entry .who.user-label {
+            color: #d35400;
+        }
+
+        .voice-transcript .entry .text {
+            word-wrap: break-word;
+            flex: 1;
+        }
+
+        .voice-controls {
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 8px 0;
+        }
+
+        .voice-controls button {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 14px;
+            font-family: var(--font);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .voice-controls button:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .voice-controls button.danger:hover {
+            background: #fde8e8;
+            border-color: #c0392b;
+            color: #c0392b;
+        }
+
+        .voice-controls button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        /* ============================================================
+               SCROLLBAR
+               ============================================================ */
+        .chat-messages::-webkit-scrollbar,
+        .voice-transcript::-webkit-scrollbar {
+            width: 4px;
+        }
+        .chat-messages::-webkit-scrollbar-track,
+        .voice-transcript::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .chat-messages::-webkit-scrollbar-thumb,
+        .voice-transcript::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 20px;
+        }
+
+        /* ============================================================
+               RESPONSIVE
+               ============================================================ */
+        @media (max-width: 600px) {
+            .app {
+                min-height: 92vh;
+                max-height: 98vh;
+                border-radius: 16px;
+            }
+
+            .app-header {
+                padding: 14px 18px;
+            }
+            .app-header .brand h1 {
+                font-size: 17px;
+            }
+            .app-header .brand small {
+                font-size: 10px;
+            }
+            .mode-toggle button {
+                font-size: 12px;
+                padding: 6px 12px;
+            }
+            .mode-toggle button i {
+                font-size: 12px;
+            }
+
+            .view {
+                padding: 0 16px 14px;
+            }
+
+            .chat-messages .message {
+                max-width: 92%;
+                font-size: 14px;
+                padding: 12px 14px;
+            }
+
+            .voice-orb {
+                width: 120px;
+                height: 120px;
+                font-size: 40px;
+            }
+
+            .voice-transcript {
+                max-height: 140px;
+                font-size: 13px;
+                padding: 12px 14px;
+            }
+
+            .quick-pills button {
+                font-size: 11px;
+                padding: 4px 12px;
+            }
+
+            .chat-input-row input {
+                font-size: 14px;
+                padding: 10px 14px;
+            }
+            .chat-input-row button {
+                width: 44px;
+                font-size: 16px;
+            }
+
+            .voice-controls button {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .app-header .brand i {
+                font-size: 20px;
+            }
+            .app-header .brand h1 {
+                font-size: 15px;
+            }
+            .mode-toggle button {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+            .voice-orb {
+                width: 100px;
+                height: 100px;
+                font-size: 32px;
+            }
+        }
+
+        /* ============================================================
+               UTILITY
+               ============================================================ */
+        .hidden {
+            display: none !important;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .mt-1 {
+            margin-top: 6px;
+        }
+        .mb-1 {
+            margin-bottom: 6px;
+        }
+        .gap-1 {
+            gap: 6px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1a2a3a;
+            color: #fff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            max-width: 90%;
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+    </style>
 </head>
+
 <body>
 
-<!-- LANDING PAGE -->
-<div class="page active" id="page-landing">
-  <div class="panel-left">
-    <div class="brand"><div class="brand-icon">C</div><span class="brand-name">CellTek</span></div>
-    <div class="panel-hero"><p class="panel-label">AI Demo — نسخة تجريبية</p><h1 class="panel-title">AI-Powered Patient Support</h1><p class="panel-desc">Experience AI-powered support for CellTek — ask about branch hours, exam preparation, insurance, and appointments in Arabic or English by chat or live voice call.</p></div>
-    <div class="panel-copy">© 2026 CellTek. All rights reserved.</div>
-  </div>
-  <div class="panel-right">
-    <div class="form-box">
-      <div class="mobile-brand"><div style="display:flex;align-items:center;gap:10px"><div class="mob-icon">C</div><span class="mob-name">CellTek</span></div></div>
-      <h2 class="form-title">Choose a demo mode</h2>
-      <p class="form-sub">Both modes connect you to our AI assistant at <strong>CellTek</strong>. Pick how you'd like to interact.</p>
-      <div class="mode-cards">
-        <button class="mode-card" onclick="showPage('chat')"><div class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4a2 2 0 00-2 2v18l4-4h14a2 2 0 002-2V4a2 2 0 00-2-2z"/></svg></div><div class="card-text"><span class="card-title">Chat with AI — محادثة</span><span class="card-desc">Type in Arabic or English for instant answers.</span></div><svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
-        <button class="mode-card" onclick="showPage('voice')"><div class="card-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.97 3.53 9.11 8.25 9.87V22h3v-4.07C17.47 17.11 21 12.97 21 8h-2c0 4.08-3.05 7.44-7 7.93z"/></svg></div><div class="card-text"><span class="card-title">Voice Call — مكالمة صوتية</span><span class="card-desc">Speak in Arabic or English. Powered by ElevenLabs.</span></div><svg class="card-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
-      </div>
-      <div class="form-footer"><span class="form-footer-label">Claude AI + ElevenLabs TTS</span><div class="powered"><svg width="14" height="14" viewBox="0 0 24 24" fill="#245598"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg> Vercel Hosted</div></div>
-    </div>
-  </div>
-</div>
+    <!-- ===== TOAST ===== -->
+    <div id="toast" class="toast"></div>
 
-<!-- CHAT PAGE -->
-<div class="page inner-page" id="page-chat">
-  <div class="inner-header">
-    <button class="back-btn" onclick="showPage('landing')"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
-    <div class="hdr-div"></div>
-    <div class="hdr-brand"><div class="hdr-icon">C</div><div><div class="hdr-name">CellTek AI</div><div class="hdr-sub">المساعد الذكي</div></div></div>
-    <div class="online-dot"><div class="dot live"></div> Online</div>
-  </div>
-  <div class="chat-body">
-    <div class="chat-intro"><h2>Chat with CellTek AI</h2><p>Ask about branches, exams, insurance, or booking — باللغة العربية أو الإنجليزية</p></div>
-    <div class="chat-messages" id="chat-messages">
-      <div class="msg bot"><div class="msg-av">C</div><div class="bubble">مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟ 😊<br/><br/>Hello! I'm CellTek's AI assistant. How can I help you today?</div></div>
-    </div>
-    <div class="quick-pills" id="quick-pills">
-      <button class="pill" onclick="sendQ('ما هي ساعات العمل؟')">ساعات العمل</button>
-      <button class="pill" onclick="sendQ('كيف أستعد للـ MRI؟')">التحضير للـ MRI</button>
-      <button class="pill" onclick="sendQ('هل تقبلون تأمين AXA؟')">تأمين AXA</button>
-      <button class="pill" onclick="sendQ('What are your branch hours?')">Branch hours</button>
-      <button class="pill" onclick="sendQ('How do I book an appointment?')">Book appointment</button>
-      <button class="pill" onclick="sendQ('كم سعر الرنين المغناطيسي؟')">أسعار MRI</button>
-    </div>
-    <div class="chat-input-row"><input class="chat-input" id="chat-input" type="text" placeholder="اكتب سؤالك... / Type your question..." onkeydown="if(event.key==='Enter')sendChat()"/><button class="send-btn" id="send-btn" onclick="sendChat()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button></div>
-  </div>
-</div>
+    <!-- ===== APP ===== -->
+    <div class="app">
 
-<!-- VOICE PAGE -->
-<div class="page inner-page" id="page-voice">
-  <div class="inner-header">
-    <button class="back-btn" onclick="stopVoiceAndBack()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg> Back</button>
-    <div class="hdr-div"></div>
-    <div class="hdr-brand"><div class="hdr-icon">C</div><div><div class="hdr-name">CellTek Voice</div><div class="hdr-sub">ElevenLabs Flash v2.5</div></div></div>
-    <div class="online-dot" id="v-hdr-dot"><div class="dot"></div><span id="v-hdr-txt">Ready</span></div>
-  </div>
-  <div class="voice-body">
-    <div class="voice-card">
-      <div class="tts-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h9l-1 8 10-12h-9z"/></svg> ElevenLabs + Fallback</div>
-      <div class="voice-orb" id="v-orb" onclick="toggleVoice()"><svg width="44" height="44" viewBox="0 0 24 24" fill="#fff"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1 1.93c-3.95-.49-7-3.85-7-7.93H2c0 4.97 3.53 9.11 8.25 9.87V22h3v-4.07C17.47 17.11 21 12.97 21 8h-2c0 4.08-3.05 7.44-7 7.93z"/></svg></div>
-      <div class="voice-name">CellTek AI</div>
-      <div class="voice-role">المساعد الذكي — Patient Support</div>
-      <div class="voice-status" id="v-status"><div class="dot"></div><span id="v-status-txt">Click mic to start — انقر للبدء</span></div>
-      <button class="voice-btn start" id="v-btn" onclick="toggleVoice()">🎙️ Start Voice Call — ابدأ المكالمة</button>
-    </div>
-    <div class="warn-box" id="v-warn"></div>
-    <div class="transcript-box" id="v-transcript"></div>
-    <div class="voice-tips" id="v-tips"><h4>💡 Try saying:</h4><div class="tip"><span>🏥</span><span>ما هي ساعات عمل فرع مدينة نصر؟</span></div><div class="tip"><span>🧲</span><span>كيف أستعد لفحص الرنين المغناطيسي؟</span></div><div class="tip"><span>🛡️</span><span>هل تقبلون تأمين Allianz؟</span></div><div class="tip"><span>📅</span><span>What are your branch hours?</span></div></div>
-  </div>
-</div>
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="brand">
+                <i class="fas fa-microscope"></i>
+                <div>
+                    <h1>CellTek AI</h1>
+                    <small>Radiology Assistant · Llama via NVIDIA</small>
+                </div>
+            </div>
+            <div class="mode-toggle" role="tablist">
+                <button class="active" data-view="chat" role="tab" aria-selected="true">
+                    <i class="fas fa-comment"></i> Chat
+                </button>
+                <button data-view="voice" role="tab" aria-selected="false">
+                    <i class="fas fa-phone-alt"></i> Voice
+                </button>
+            </div>
+        </header>
 
-<script>
-// ================= KNOWLEDGE BASE (same as backend) =================
-const KB = [
-  { keys: ['ساعات','ساعه','مواعيد','وقت','يفتح','يقفل','hours','open','close','working','schedule','timing'],
-    ar: `فروع CellTek مفتوحة السبت حتى الخميس:\n• مدينة نصر: ٨ ص – ١٠ م\n• المعادي: ٨ ص – ٩ م\n• مصر الجديدة: ٨ ص – ١٠ م\n• السادس من أكتوبر: ٩ ص – ٩ م\n• القاهرة الجديدة: ٨ ص – ١٠ م\nجميع الفروع مغلقة يوم الجمعة.\nفي رمضان: ٩ ص – ٦ م (أكتوبر والمعادي حتى ٥ م).`,
-    en: `CellTek branches are open Saturday to Thursday:\n• Nasr City: 8AM–10PM\n• Maadi: 8AM–9PM\n• Heliopolis: 8AM–10PM\n• 6th October: 9AM–9PM\n• New Cairo: 8AM–10PM\nAll branches are closed on Friday.\nRamadan hours: 9AM–6PM (Maadi & October until 5PM).` },
-  { keys: ['فرع','فروع','عنوان','مكان','اين','أين','branch','location','address','where','nasr','maadi','heliopolis','october','cairo'],
-    ar: `فروع CellTek:\n• مدينة نصر: ٩٠ شارع عباس العقاد\n• المعادي: ١٥ طريق ٩\n• مصر الجديدة: ٣٢ شارع مرغني\n• السادس من أكتوبر: سنترال مول\n• القاهرة الجديدة: شارع التسعين، التجمع الأول\n📞 الخط الموحد: 16789`,
-    en: `CellTek branches:\n• Nasr City: 90 Abbas El-Akkad St\n• Maadi: 15 Road 9\n• Heliopolis: 32 Merghany St\n• 6th October: Central Mall\n• New Cairo: 90th Street, 1st Settlement\n📞 Hotline: 16789` },
-  { keys: ['رقم','تليفون','هاتف','اتصل','حجز','موعد','phone','number','call','book','appointment','contact','16789'],
-    ar: `يمكنك الحجز أو الاستفسار عبر:\n📞 الخط الموحد: 16789\nمتاح السبت حتى الخميس من ٨ ص إلى ٨ م.\nيمكنك أيضاً زيارة أي فرع مباشرةً.`,
-    en: `To book or inquire:\n📞 Unified hotline: 16789\nAvailable Saturday–Thursday, 8AM–8PM.\nYou can also walk in to any branch.` },
-  { keys: ['mri','رنين','رنين مغناطيسي','ريزونانس','استعد','تحضير mri','prepare mri'],
-    ar: `التحضير لفحص الرنين المغناطيسي:\n🧲 رنين المخ/العمود الفقري: لا يلزم صيام. ارتدِ ملابس فضفاضة وأزل جميع المعادن (مجوهرات، ساعات). المدة: ٣٠–٦٠ دقيقة.\n🧲 رنين البطن: صيام ٤–٦ ساعات. المدة: ٤٥–٧٥ دقيقة.\nأبلغ الطاقم إذا كان لديك غرسات معدنية أو ناظم قلب.`,
-    en: `MRI preparation:\n🧲 Brain/Spine MRI: No fasting required. Wear loose clothing, remove all metal (jewelry, watches). Duration: 30–60 min.\n🧲 Abdominal MRI: Fast 4–6 hours before. Duration: 45–75 min.\nAlways inform staff of any metal implants or pacemaker.` },
-  { keys: ['ct','سكان','مقطعية','computed','tomography','اشعة مقطعية'],
-    ar: `التحضير للأشعة المقطعية:\n💉 بالتباين: صيام ٤ ساعات، أحضر تحليل وظائف الكلى (كرياتينين)، أبلغ الطاقم عن حساسية لليود. المدة: ١٥–٣٠ دقيقة.\n✅ بدون تباين: لا يلزم تحضير. المدة: ١٠–٢٠ دقيقة.`,
-    en: `CT scan preparation:\n💉 With contrast: Fast 4 hours, bring creatinine test, inform staff of iodine allergy. Duration: 15–30 min.\n✅ Without contrast: No preparation needed. Duration: 10–20 min.` },
-  { keys: ['xray','x-ray','اشعة','أشعة سينية','سينية','سنة'],
-    ar: `الأشعة السينية لا تحتاج تحضيراً خاصاً.\nأزل الإكسسوارات المعدنية من منطقة الفحص. المدة: ٥–١٥ دقيقة.\n⚠️ أبلغ الطاقم إذا كنتِ حاملاً.`,
-    en: `X-Ray requires no special preparation.\nRemove metal accessories from the area being scanned. Duration: 5–15 min.\n⚠️ Inform staff if you are pregnant.` },
-  { keys: ['ultrasound','سونار','موجات','echography'],
-    ar: `التحضير للسونار:\n🔵 سونار البطن: صيام ٦–٨ ساعات. المدة: ٢٠–٤٠ دقيقة.\n🔵 سونار الحوض: اشربي لتر ماء قبل ساعة ولا تذهبي للحمام (مثانة ممتلئة). المدة: ٢٠–٣٠ دقيقة.`,
-    en: `Ultrasound preparation:\n🔵 Abdominal: Fast 6–8 hours. Duration: 20–40 min.\n🔵 Pelvic: Drink 1 litre of water 1 hour before and do not urinate (full bladder required). Duration: 20–30 min.` },
-  { keys: ['mammography','ماموغرافي','ثدي','breast'],
-    ar: `الماموغرافي لا يحتاج تحضيراً خاصاً.\nلا تضعي مزيل عرق أو كريم على منطقة الصدر يوم الفحص.\nيُفضل إجراؤه بعد أسبوع من انتهاء الدورة الشهرية. المدة: ١٥–٢٠ دقيقة.`,
-    en: `Mammography requires no special preparation.\nDo not apply deodorant, powder, or cream to the chest area on the day of the exam.\nBest performed 1 week after the end of your menstrual cycle. Duration: 15–20 min.` },
-  { keys: ['تامين','تأمين','بوليصة','insurance','allianz','axa','mednet','bupa','cigna','metlife','globemed','takaful','تكافل','مقبول','يقبل'],
-    ar: `شركات التأمين المقبولة في CellTek:\n✅ أليانز — تغطية كاملة وجزئية (موافقة مسبقة للرنين والمقطعية)\n✅ أكسا — تغطية كاملة وجزئية (موافقة مسبقة للرنين)\n✅ ميدنت — تغطية كاملة، لا تحتاج موافقة مسبقة للخدمات الأساسية\n✅ بيوبا — تغطية كاملة وجزئية\n✅ سيغنا — تغطية كاملة، ٠٪ مشاركة للشبكة الداخلية\n✅ ميتلايف، جلوب ميد، التأمين الصحي الشامل\nللتأكيد اتصل بـ 16789.`,
-    en: `Insurance accepted at CellTek:\n✅ Allianz — Full & partial (pre-approval for MRI/CT)\n✅ AXA — Full & partial (pre-approval for MRI)\n✅ MedNet — Full, no pre-approval for basic services\n✅ Bupa — Full & partial\n✅ Cigna — Full, 0% co-pay in-network\n✅ MetLife, GlobeMed, National Health (Takaful)\nCall 16789 to confirm your coverage.` },
-  { keys: ['سعر','اسعار','أسعار','تكلفة','كم','price','cost','how much','pricing','تمن','ثمن'],
-    ar: `الأسعار التقريبية بالجنيه المصري:\n🧲 رنين المخ: ١٥٠٠–٢٥٠٠ جنيه\n🧲 رنين البطن: ١٥٠٠–٢٥٠٠ جنيه\n📡 مقطعية بتباين: ٩٠٠–١٨٠٠ جنيه\n📡 مقطعية بدون تباين: ٦٠٠–١٢٠٠ جنيه\n☢️ أشعة سينية: ٨٠–٢٠٠ جنيه\n🔵 سونار البطن: ٣٠٠–٦٠٠ جنيه\n🔵 سونار الحوض: ٢٥٠–٥٠٠ جنيه\n🩺 ماموغرافي: ٤٠٠–٧٠٠ جنيه\nللأسعار الدقيقة اتصل بـ 16789.`,
-    en: `Approximate prices in EGP:\n🧲 MRI Brain: 1,500–2,500\n🧲 MRI Abdomen: 1,500–2,500\n📡 CT with Contrast: 900–1,800\n📡 CT without Contrast: 600–1,200\n☢️ X-Ray: 80–200\n🔵 Ultrasound Abdomen: 300–600\n🔵 Ultrasound Pelvis: 250–500\n🩺 Mammography: 400–700\nFor exact pricing call 16789.` },
-  { keys: ['نتيجة','نتائج','result','results','report','تقرير','متى تجهز','when ready'],
-    ar: `النتائج تكون جاهزة خلال ٢٤–٤٨ ساعة.\nيمكن استلامها شخصياً من الفرع، أو إرسالها عبر البريد الإلكتروني إذا طلبت ذلك عند الحجز.\nللحالات العاجلة، أبلغ الموظف عند الحجز.`,
-    en: `Results are usually ready within 24–48 hours.\nYou can collect them in person at the branch, or have them sent by email if requested at booking.\nFor urgent cases, inform staff when booking.` },
-  { keys: ['اطفال','أطفال','طفل','children','child','kids','baby'],
-    ar: `نعم، نقدم خدمات الأشعة لجميع الفئات العمرية بما فيها الأطفال.\nيرجى إبلاغ الموظف عند الحجز لترتيب الاستقبال المناسب.`,
-    en: `Yes, we provide radiology services for all age groups including children.\nPlease inform staff when booking so we can arrange appropriate care.` },
-  { keys: ['حامل','حمل','pregnant','pregnancy'],
-    ar: `الرنين المغناطيسي يُعتبر آمناً أثناء الحمل عموماً، خاصةً بعد الشهر الثالث.\nالأشعة السينية والمقطعية تستخدم جرعات منخفضة من الإشعاع — أبلغي الطاقم دائماً إذا كنتِ حاملاً.\nاستشيري طبيبك أولاً في جميع الحالات.`,
-    en: `MRI is generally considered safe during pregnancy, especially after the first trimester.\nX-Ray and CT use low radiation — always inform staff if you are pregnant.\nAlways consult your doctor first.` },
-  { keys: ['parking','موقف','سيارة','park'],
-    ar: `يتوفر موقف سيارات في معظم الفروع.\nاتصل بـ 16789 أو تواصل مع الفرع المحدد للتأكيد.`,
-    en: `Parking is available at most branches.\nCall 16789 or contact the specific branch to confirm.` },
-  { keys: ['مرحبا','هلا','السلام','صباح','مساء','hello','hi','hey','good morning','good evening','greetings'],
-    ar: `مرحباً! أنا المساعد الرقمي لـ CellTek 😊\nيمكنني مساعدتك في:\n• مواعيد وعناوين الفروع\n• التحضير للفحوصات (رنين، مقطعية، أشعة، سونار)\n• التأمين الطبي المقبول\n• الأسعار التقريبية\n• حجز المواعيد\nكيف أستطيع مساعدتك؟`,
-    en: `Hello! I'm CellTek's digital assistant 😊\nI can help you with:\n• Branch hours and locations\n• Exam preparation (MRI, CT, X-Ray, Ultrasound)\n• Accepted insurance companies\n• Approximate pricing\n• Appointment booking\nHow can I help you?` }
-];
-const FALLBACK = { ar: `عذراً، لا تتوفر لدي هذه المعلومات حالياً.\nيرجى الاتصال بمركز الاتصال على 📞 16789\nمتاح السبت–الخميس من ٨ ص إلى ٨ م.`, en: `I'm sorry, I don't have information about that.\nPlease call our hotline: 📞 16789\nAvailable Saturday–Thursday, 8AM–8PM.` };
-function isArabic(t){ return /[\u0600-\u06FF]/.test(t); }
-function getAnswer(t){ const q=t.toLowerCase().trim(); for(let i of KB) if(i.keys.some(k=>q.includes(k.toLowerCase()))) return isArabic(t)?i.ar:i.en; return isArabic(t)?FALLBACK.ar:FALLBACK.en; }
+        <!-- MAIN -->
+        <div class="main-area">
 
-// ================= PAGE ROUTER =================
-function showPage(name){ document.querySelectorAll('.page').forEach(p=>p.classList.remove('active')); document.getElementById('page-'+name).classList.add('active'); }
+            <!-- ========== CHAT VIEW ========== -->
+            <section class="view active" id="view-chat" role="tabpanel">
+                <div class="chat-messages" id="chatMessages">
+                    <!-- welcome message injected by JS -->
+                </div>
 
-// ================= CHAT =================
-let chatHistory=[];
-function appendMsg(role,text){ const box=document.getElementById('chat-messages'); const d=document.createElement('div'); d.className='msg '+(role==='user'?'user':'bot'); d.innerHTML=`<div class="msg-av">${role==='user'?'👤':'C'}</div><div class="bubble">${text.replace(/\n/g,'<br/>')}</div>`; box.appendChild(d); box.scrollTop=box.scrollHeight; }
-function showTyping(){ const box=document.getElementById('chat-messages'); const d=document.createElement('div'); d.className='msg bot'; d.id='typing'; d.innerHTML='<div class="msg-av">C</div><div class="bubble typing-bubble"><span></span><span></span><span></span></div>'; box.appendChild(d); box.scrollTop=box.scrollHeight; }
-function hideTyping(){ const e=document.getElementById('typing'); if(e)e.remove(); }
-async function callChat(userText){ chatHistory.push({role:'user',content:userText}); const res=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({messages:chatHistory})}); const data=await res.json(); if(!res.ok)throw new Error(data.error||'Chat error'); chatHistory.push({role:'assistant',content:data.text}); return data.text; }
-async function sendChat(){ const input=document.getElementById('chat-input'); const text=input.value.trim(); if(!text)return; input.value=''; document.getElementById('send-btn').disabled=true; document.getElementById('quick-pills').style.display='none'; appendMsg('user',text); showTyping(); try{ const reply=await callChat(text); hideTyping(); appendMsg('bot',reply); }catch(e){ hideTyping(); appendMsg('bot','عذراً، حدث خطأ. يرجى المحاولة مجدداً. / Sorry, an error occurred. Please try again.'); } document.getElementById('send-btn').disabled=false; document.getElementById('chat-input').focus(); }
-function sendQ(text){ document.getElementById('chat-input').value=text; sendChat(); }
+                <div class="quick-pills" id="quickPills">
+                    <button data-question="ما هي فروع سيلتك؟">🏥 الفروع</button>
+                    <button data-question="ما هي أسعار الأشعة؟">💰 الأسعار</button>
+                    <button data-question="كيف أحجز موعد؟">📅 الحجز</button>
+                    <button data-question="What insurance do you accept?">🛡️ Insurance</button>
+                    <button data-question="تحضيرات الرنين المغناطيسي">🧠 MRI prep</button>
+                </div>
 
-// ================= VOICE (fixed listening loop) =================
-let recognition = null;
-let voiceActive = false;
-let aiSpeaking = false;
-let currentAudio = null;
-let voiceHistory = [];
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" placeholder="اكتب سؤالك بالعربية أو الإنجليزية…" autofocus />
+                    <button id="sendBtn" aria-label="إرسال"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </section>
 
-function setVUI(orbCls, statusCls, statusTxt, btnCls, btnTxt, hdrTxt) {
-  document.getElementById('v-orb').className = 'voice-orb ' + orbCls;
-  document.getElementById('v-status').className = 'voice-status ' + statusCls;
-  document.getElementById('v-status-txt').textContent = statusTxt;
-  document.getElementById('v-btn').className = 'voice-btn ' + btnCls;
-  document.getElementById('v-btn').textContent = btnTxt;
-  document.getElementById('v-hdr-txt').textContent = hdrTxt;
-  const dot = document.querySelector('#v-hdr-dot .dot');
-  dot.className = 'dot ' + (orbCls ? 'live' : '');
-}
+            <!-- ========== VOICE VIEW ========== -->
+            <section class="view" id="view-voice" role="tabpanel">
+                <div class="voice-container">
+                    <div class="voice-orb" id="voiceOrb" role="button" tabindex="0" aria-label="بدء مكالمة صوتية">
+                        <span class="pulse-ring"></span>
+                        <span class="pulse-ring"></span>
+                        <span class="icon-wrap"><i class="fas fa-microphone"></i></span>
+                        <span class="status-label" id="voiceStatus">انقر للتحدث</span>
+                    </div>
 
-function addTranscript(who, text) {
-  const box = document.getElementById('v-transcript');
-  box.classList.add('show');
-  document.getElementById('v-tips').style.display = 'none';
-  const d = document.createElement('div');
-  d.className = 't-line ' + (who === 'user' ? 'user-t' : 'ai-t');
-  d.textContent = (who === 'user' ? '👤 أنت: ' : '🤖 CellTek: ') + text;
-  box.appendChild(d);
-  box.scrollTop = box.scrollHeight;
-}
+                    <div class="voice-transcript" id="voiceTranscript">
+                        <div class="entry"><span class="who">🤖</span><span class="text">مرحباً! أنا مساعد سيلتك الصوتي. اضغط على الكرة وابدأ التحدث.</span></div>
+                    </div>
 
-function stopAudio() { if (currentAudio) { currentAudio.pause(); currentAudio = null; } }
+                    <div class="voice-controls">
+                        <button id="voiceToggleBtn" class="primary"><i class="fas fa-play"></i> بدء المكالمة</button>
+                        <button id="voiceClearBtn"><i class="fas fa-eraser"></i> مسح النص</button>
+                        <button id="voiceEndBtn" class="danger" disabled><i class="fas fa-stop"></i> إنهاء</button>
+                    </div>
 
-// Fallback TTS
-function speakFallback(text, onDone) {
-  window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  const arabic = isArabic(text);
-  utter.lang = arabic ? 'ar-EG' : 'en-US';
-  utter.rate = 0.9;
-  utter.pitch = 1.0;
-  utter.onend = () => { aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
-  utter.onerror = () => { aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
-  aiSpeaking = true;
-  window.speechSynthesis.speak(utter);
-}
+                    <p style="font-size:12px;color:var(--text-light);margin-top:4px;">
+                        <i class="fas fa-info-circle"></i> يعمل على Chrome / Edge · يتعرف على العربية والإنجليزية
+                    </p>
+                </div>
+            </section>
 
-// ElevenLabs TTS
-async function speakElevenLabs(text, onDone) {
-  stopAudio();
-  try {
-    const res = await fetch('/api/tts', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) });
-    if (!res.ok) throw new Error('TTS HTTP ' + res.status);
-    const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
-    const audio = new Audio(url);
-    currentAudio = audio;
-    audio.onended = () => { URL.revokeObjectURL(url); currentAudio = null; aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
-    audio.onerror = () => { URL.revokeObjectURL(url); currentAudio = null; aiSpeaking = false; if (onDone) onDone(); if (voiceActive) startListening(); };
-    aiSpeaking = true;
-    await audio.play();
-  } catch (err) {
-    console.warn('ElevenLabs failed, using fallback TTS:', err);
-    speakFallback(text, onDone);
-  }
-}
+        </div><!-- /main-area -->
+    </div><!-- /app -->
 
-// Start listening – ensures previous recognition is cleaned up
-function startListening() {
-  if (!voiceActive) return;
-  if (recognition) {
-    try { recognition.abort(); } catch(e) {}
-    recognition = null;
-  }
-  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) {
-    showWarn('⚠️ Voice not supported. Use Chrome/Edge.');
-    stopVoice();
-    return;
-  }
-  recognition = new SR();
-  recognition.lang = 'ar-EG';
-  recognition.continuous = false;
-  recognition.interimResults = false;
-  
-  recognition.onstart = () => {
-    console.log('Listening started');
-    setVUI('ringing', 'listening', '🎤 Listening — يسمعك', 'end', '📵 End Call', 'Listening');
-  };
-  
-  recognition.onresult = async (e) => {
-    const userText = e.results[0][0].transcript;
-    console.log('User said:', userText);
-    addTranscript('user', userText);
-    setVUI('', 'live', '⏳ Thinking — يفكر...', 'end', '📵 End Call', 'Thinking');
-    
-    try {
-      voiceHistory.push({ role: 'user', content: userText });
-      const res = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: voiceHistory }) });
-      const data = await res.json();
-      const reply = data.text || 'عذراً، لم أتمكن من الرد.';
-      voiceHistory.push({ role: 'assistant', content: reply });
-      addTranscript('ai', reply);
-      setVUI('speaking', 'speaking-ai', '🔊 Speaking — يتكلم', 'end', '📵 End Call', 'Speaking');
-      await speakElevenLabs(reply, () => {
-        // After speaking, restart listening if still active
-        if (voiceActive && !aiSpeaking) startListening();
-      });
-    } catch (err) {
-      console.error('Voice chat error:', err);
-      if (voiceActive) startListening();
-    }
-  };
-  
-  recognition.onerror = (e) => {
-    console.error('Recognition error:', e.error);
-    if (e.error === 'not-allowed') {
-      showWarn('⚠️ Microphone access denied. Please allow microphone access.');
-      stopVoice();
-    } else if (voiceActive && !aiSpeaking) {
-      // Retry after a short delay
-      setTimeout(() => { if (voiceActive) startListening(); }, 500);
-    }
-  };
-  
-  recognition.onend = () => {
-    console.log('Recognition ended');
-    if (voiceActive && !aiSpeaking && !currentAudio && !window.speechSynthesis.speaking) {
-      setTimeout(() => { if (voiceActive) startListening(); }, 300);
-    }
-  };
-  
-  recognition.start();
-}
+    <script>
+        // ================================================================
+        //  CELLTEK AI — FULL CLIENT
+        //  Uses NVIDIA Llama API (via /api/chat) + ElevenLabs TTS (via /api/tts)
+        //  Auto-detects language (Arabic / English) per message.
+        // ================================================================
 
-function showWarn(msg) {
-  const w = document.getElementById('v-warn');
-  w.textContent = msg;
-  w.classList.add('show');
-  setTimeout(() => w.classList.remove('show'), 5000);
-}
+        (function() {
+            'use strict';
 
-async function startVoice() {
-  voiceActive = true;
-  voiceHistory = [];
-  document.getElementById('v-warn').classList.remove('show');
-  const greeting = 'مرحباً! أنا المساعد الذكي لـ CellTek. كيف أستطيع مساعدتك اليوم؟';
-  addTranscript('ai', greeting);
-  voiceHistory.push({ role: 'assistant', content: greeting });
-  setVUI('speaking', 'speaking-ai', '🔊 Speaking — يتكلم', 'end', '📵 End Call', 'Speaking');
-  await speakElevenLabs(greeting, () => {
-    if (voiceActive) startListening();
-  });
-}
+            // ---- DOM refs ----
+            const chatMessages = document.getElementById('chatMessages');
+            const chatInput = document.getElementById('chatInput');
+            const sendBtn = document.getElementById('sendBtn');
+            const quickPills = document.getElementById('quickPills');
 
-function stopVoice() {
-  voiceActive = false;
-  aiSpeaking = false;
-  if (recognition) { try { recognition.abort(); } catch(e) {} recognition = null; }
-  window.speechSynthesis.cancel();
-  stopAudio();
-  setVUI('', '', 'Call ended — انتهت المكالمة', 'start', '🎙️ New Call — مكالمة جديدة', 'Ready');
-}
+            const viewBtns = document.querySelectorAll('.mode-toggle button');
+            const chatView = document.getElementById('view-chat');
+            const voiceView = document.getElementById('view-voice');
 
-function toggleVoice() { voiceActive ? stopVoice() : startVoice(); }
-function stopVoiceAndBack() { stopVoice(); showPage('landing'); }
-</script>
+            const voiceOrb = document.getElementById('voiceOrb');
+            const voiceStatus = document.getElementById('voiceStatus');
+            const voiceTranscript = document.getElementById('voiceTranscript');
+            const voiceToggleBtn = document.getElementById('voiceToggleBtn');
+            const voiceClearBtn = document.getElementById('voiceClearBtn');
+            const voiceEndBtn = document.getElementById('voiceEndBtn');
+
+            const toast = document.getElementById('toast');
+
+            // ---- State ----
+            let chatHistory = []; // { role, content }
+            let isWaiting = false;
+
+            // Voice state
+            let voiceState = 'idle'; // idle | listening | speaking | ended
+            let recognition = null;
+            let isVoiceActive = false;
+            let voiceSessionActive = false;
+            let transcriptLines = [];
+
+            // ---- Helpers ----
+            function showToast(msg, duration = 3000) {
+                toast.textContent = msg;
+                toast.classList.add('show');
+                clearTimeout(toast._hide);
+                toast._hide = setTimeout(() => toast.classList.remove('show'), duration);
+            }
+
+            function scrollChat() {
+                const container = chatMessages;
+                container.scrollTop = container.scrollHeight;
+            }
+
+            function getLang(text) {
+                // crude but effective: detect Arabic script
+                return /[\u0600-\u06FF]/.test(text) ? 'ar' : 'en';
+            }
+
+            function formatTime() {
+                return new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+            }
+
+            // ---- Chat ----
+            function addMessage(role, content) {
+                const div = document.createElement('div');
+                div.className = `message ${role}`;
+
+                if (role === 'assistant') {
+                    const lang = getLang(content);
+                    const badge = document.createElement('div');
+                    badge.className = 'lang-badge';
+                    badge.textContent = lang === 'ar' ? '🇸🇦 العربية' : '🇬🇧 English';
+                    div.appendChild(badge);
+                    const textNode = document.createElement('span');
+                    textNode.textContent = content;
+                    div.appendChild(textNode);
+                } else {
+                    div.textContent = content;
+                }
+
+                chatMessages.appendChild(div);
+                scrollChat();
+                return div;
+            }
+
+            function showTyping() {
+                const div = document.createElement('div');
+                div.className = 'typing';
+                div.id = 'typingIndicator';
+                div.innerHTML = '<span></span><span></span><span></span> يكتب…';
+                chatMessages.appendChild(div);
+                scrollChat();
+                return div;
+            }
+
+            function removeTyping() {
+                const el = document.getElementById('typingIndicator');
+                if (el) el.remove();
+            }
+
+            function setWaiting(waiting) {
+                isWaiting = waiting;
+                sendBtn.disabled = waiting;
+                chatInput.disabled = waiting;
+                if (waiting) {
+                    chatInput.placeholder = 'جاري التفكير…';
+                } else {
+                    chatInput.placeholder = 'اكتب سؤالك بالعربية أو الإنجليزية…';
+                    chatInput.focus();
+                }
+            }
+
+            function sendMessage(text) {
+                text = text.trim();
+                if (!text || isWaiting) return;
+
+                // Add user message
+                addMessage('user', text);
+                chatHistory.push({ role: 'user', content: text });
+                chatInput.value = '';
+
+                setWaiting(true);
+                showTyping();
+
+                // Call /api/chat
+                fetch('/api/chat', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ messages: chatHistory }),
+                    })
+                    .then(res => {
+                        if (!res.ok) return res.text().then(t => { throw new Error(t || `HTTP ${res.status}`) });
+                        return res.json();
+                    })
+                    .then(data => {
+                        if (data.error) throw new Error(data.error);
+                        const reply = data.text || 'عذراً، لم أستطع الرد.';
+                        addMessage('assistant', reply);
+                        chatHistory.push({ role: 'assistant', content: reply });
+                        // Keep history manageable
+                        if (chatHistory.length > 20) {
+                            chatHistory = chatHistory.slice(-20);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Chat error:', err);
+                        showToast('⚠️ ' + (err.message || 'فشل الاتصال بالخادم'));
+                        addMessage('assistant', 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى أو الاتصال على 16789.');
+                    })
+                    .finally(() => {
+                        removeTyping();
+                        setWaiting(false);
+                        scrollChat();
+                    });
+            }
+
+            // ---- Quick pills ----
+            quickPills.addEventListener('click', (e) => {
+                const btn = e.target.closest('button');
+                if (!btn) return;
+                const q = btn.dataset.question;
+                if (q) sendMessage(q);
+            });
+
+            // ---- Chat input ----
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    sendMessage(chatInput.value);
+                }
+            });
+
+            sendBtn.addEventListener('click', () => {
+                sendMessage(chatInput.value);
+            });
+
+            // ---- View switching ----
+            viewBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const view = btn.dataset.view;
+                    // update tabs
+                    viewBtns.forEach(b => {
+                        b.classList.remove('active');
+                        b.setAttribute('aria-selected', 'false');
+                    });
+                    btn.classList.add('active');
+                    btn.setAttribute('aria-selected', 'true');
+
+                    // show view
+                    chatView.classList.toggle('active', view === 'chat');
+                    voiceView.classList.toggle('active', view === 'voice');
+
+                    if (view === 'chat') {
+                        chatInput.focus();
+                        // If voice was active, pause it
+                        if (voiceSessionActive) endVoiceCall();
+                    } else {
+                        // voice view
+                        if (!voiceSessionActive) {
+                            voiceStatus.textContent = 'انقر للتحدث';
+                            voiceOrb.className = 'voice-orb';
+                        }
+                    }
+                });
+            });
+
+            // ---- Welcome message ----
+            function initChat() {
+                const welcome =
+                    '👋 مرحباً بك في مساعد سيلتك الذكي!  \nأنا هنا للإجابة عن أسئلتك حول الفروع، الأسعار، التحضيرات، التأمين، والحجز.  \nاسأل بالعربية أو الإنجليزية.';
+                addMessage('assistant', welcome);
+                chatHistory.push({ role: 'assistant', content: welcome });
+                chatInput.focus();
+            }
+            initChat();
+
+            // ================================================================
+            //  VOICE MODULE
+            // ================================================================
+
+            let audioPlayer = null;
+            let isSpeaking = false;
+            let voiceLoopActive = false;
+            let voiceAbortController = null;
+
+            // ---- ElevenLabs TTS via /api/tts ----
+            function speakText(text) {
+                return new Promise((resolve, reject) => {
+                    if (!text || text.trim().length === 0) {
+                        resolve();
+                        return;
+                    }
+
+                    // Trim to reasonable length for voice (2 sentences max)
+                    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+                    const shortText = sentences.slice(0, 2).join(' ').trim();
+                    if (!shortText) { resolve(); return; }
+
+                    isSpeaking = true;
+                    voiceOrb.className = 'voice-orb speaking';
+                    voiceStatus.textContent = '📢 يتحدث…';
+
+                    fetch('/api/tts', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ text: shortText }),
+                        })
+                        .then(res => {
+                            if (!res.ok) return res.text().then(t => { throw new Error(t || `HTTP ${res.status}`) });
+                            return res.arrayBuffer();
+                        })
+                        .then(buffer => {
+                            const blob = new Blob([buffer], { type: 'audio/mpeg' });
+                            const url = URL.createObjectURL(blob);
+                            if (audioPlayer) {
+                                audioPlayer.pause();
+                                audioPlayer.src = '';
+                            }
+                            audioPlayer = new Audio(url);
+                            audioPlayer.onended = () => {
+                                URL.revokeObjectURL(url);
+                                isSpeaking = false;
+                                if (voiceSessionActive) {
+                                    voiceOrb.className = 'voice-orb';
+                                    voiceStatus.textContent = '🎤 استمع…';
+                                    // Continue listening
+                                    startListening();
+                                } else {
+                                    voiceOrb.className = 'voice-orb';
+                                    voiceStatus.textContent = 'انتهى';
+                                }
+                                resolve();
+                            };
+                            audioPlayer.onerror = (e) => {
+                                URL.revokeObjectURL(url);
+                                isSpeaking = false;
+                                console.warn('Audio playback error:', e);
+                                if (voiceSessionActive) {
+                                    voiceOrb.className = 'voice-orb';
+                                    voiceStatus.textContent = '🎤 استمع…';
+                                    startListening();
+                                } else {
+                                    voiceOrb.className = 'voice-orb';
+                                    voiceStatus.textContent = 'خطأ في الصوت';
+                                }
+                                resolve();
+                            };
+                            audioPlayer.play().catch(err => {
+                                console.warn('Play error:', err);
+                                isSpeaking = false;
+                                resolve();
+                            });
+                        })
+                        .catch(err => {
+                            console.error('TTS error:', err);
+                            isSpeaking = false;
+                            showToast('⚠️ تعذر تشغيل الصوت: ' + (err.message || ''));
+                            voiceOrb.className = 'voice-orb';
+                            voiceStatus.textContent = 'خطأ في الصوت';
+                            if (voiceSessionActive) {
+                                // try to continue
+                                setTimeout(() => {
+                                    if (voiceSessionActive) startListening();
+                                }, 500);
+                            }
+                            resolve();
+                        });
+                });
+            }
+
+            // ---- Web Speech: listen ----
+            function startListening() {
+                if (!voiceSessionActive) return;
+                if (isSpeaking) {
+                    // wait for speech to finish
+                    return;
+                }
+
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    showToast('⚠️ المتصفح لا يدعم التعرف الصوتي. استخدم Chrome أو Edge.');
+                    voiceStatus.textContent = '⚠️ غير مدعوم';
+                    return;
+                }
+
+                const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SR();
+                recognition.lang = 'ar-EG';
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    voiceOrb.className = 'voice-orb listening';
+                    voiceStatus.textContent = '🎤 استمع…';
+                };
+
+                recognition.onerror = (event) => {
+                    console.warn('Recognition error:', event.error);
+                    if (event.error === 'not-allowed') {
+                        showToast('⚠️ يرجى السماح بالوصول إلى الميكروفون.');
+                        voiceStatus.textContent = '❌ ميكروفون ممنوع';
+                        endVoiceCall();
+                        return;
+                    }
+                    if (event.error === 'no-speech') {
+                        voiceStatus.textContent = '🔇 لم يُسمع صوت، حاول مجدداً';
+                        // retry after short delay
+                        if (voiceSessionActive) {
+                            setTimeout(() => {
+                                if (voiceSessionActive && !isSpeaking) startListening();
+                            }, 800);
+                        }
+                        return;
+                    }
+                    // other errors: retry
+                    if (voiceSessionActive && !isSpeaking) {
+                        setTimeout(() => {
+                            if (voiceSessionActive && !isSpeaking) startListening();
+                        }, 500);
+                    }
+                };
+
+                recognition.onresult = (event) => {
+                    const result = event.results[0];
+                    if (!result) return;
+                    const transcript = result[0].transcript.trim();
+                    if (!transcript) {
+                        if (voiceSessionActive) {
+                            setTimeout(() => { if (voiceSessionActive && !isSpeaking) startListening(); }, 300);
+                        }
+                        return;
+                    }
+
+                    // Show transcript
+                    addTranscriptLine('أنت', transcript);
+                    voiceStatus.textContent = '⏳ جاري التفكير…';
+                    voiceOrb.className = 'voice-orb';
+
+                    // Send to AI
+                    const msgs = [{ role: 'user', content: transcript }];
+                    // include a little context from chat history
+                    const context = chatHistory.slice(-6);
+                    const fullMsgs = [...context, { role: 'user', content: transcript }];
+
+                    fetch('/api/chat', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ messages: fullMsgs }),
+                        })
+                        .then(res => {
+                            if (!res.ok) return res.text().then(t => { throw new Error(t || `HTTP ${res.status}`) });
+                            return res.json();
+                        })
+                        .then(async data => {
+                            if (data.error) throw new Error(data.error);
+                            const reply = data.text || 'عذراً، لم أستطع الرد.';
+                            addTranscriptLine('🤖 سيلتك', reply);
+
+                            // Store in chat history
+                            chatHistory.push({ role: 'user', content: transcript });
+                            chatHistory.push({ role: 'assistant', content: reply });
+                            if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+                            // Speak the reply
+                            if (voiceSessionActive) {
+                                await speakText(reply);
+                                // After speaking, continue listening
+                                if (voiceSessionActive && !isSpeaking) {
+                                    startListening();
+                                }
+                            }
+                        })
+                        .catch(err => {
+                            console.error('Voice chat error:', err);
+                            showToast('⚠️ ' + (err.message || 'فشل الاتصال'));
+                            addTranscriptLine('🤖 سيلتك', 'عذراً، حدث خطأ. يرجى المحاولة مرة أخرى.');
+                            if (voiceSessionActive) {
+                                setTimeout(() => {
+                                    if (voiceSessionActive && !isSpeaking) startListening();
+                                }, 1000);
+                            }
+                        });
+                };
+
+                try {
+                    recognition.start();
+                } catch (e) {
+                    console.warn('Recognition start error:', e);
+                    if (voiceSessionActive) {
+                        setTimeout(() => { if (voiceSessionActive && !isSpeaking) startListening(); }, 500);
+                    }
+                }
+            }
+
+            // ---- Transcript ----
+            function addTranscriptLine(who, text) {
+                const div = document.createElement('div');
+                div.className = 'entry';
+                const whoSpan = document.createElement('span');
+                whoSpan.className = 'who' + (who === 'أنت' ? ' user-label' : '');
+                whoSpan.textContent = who;
+                const textSpan = document.createElement('span');
+                textSpan.className = 'text';
+                textSpan.textContent = text;
+                div.appendChild(whoSpan);
+                div.appendChild(textSpan);
+                voiceTranscript.appendChild(div);
+                voiceTranscript.scrollTop = voiceTranscript.scrollHeight;
+            }
+
+            // ---- Voice call lifecycle ----
+            function startVoiceCall() {
+                if (voiceSessionActive) return;
+                if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                    showToast('⚠️ التعرف الصوتي غير مدعوم في هذا المتصفح. استخدم Chrome أو Edge.');
+                    return;
+                }
+
+                voiceSessionActive = true;
+                voiceLoopActive = true;
+                transcriptLines = [];
+                voiceTranscript.innerHTML = '';
+                addTranscriptLine('🤖 سيلتك', '👋 مرحباً! أنا مساعد سيلتك الصوتي. تحدث الآن، وسأرد عليك.');
+                voiceStatus.textContent = '🎤 استمع…';
+                voiceOrb.className = 'voice-orb';
+                voiceToggleBtn.disabled = true;
+                voiceEndBtn.disabled = false;
+                voiceToggleBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جارٍ الاتصال…';
+
+                // Start listening after a short delay
+                setTimeout(() => {
+                    if (voiceSessionActive) {
+                        startListening();
+                        voiceToggleBtn.innerHTML = '<i class="fas fa-microphone"></i> جارٍ المكالمة';
+                        voiceToggleBtn.disabled = true;
+                    }
+                }, 400);
+
+                showToast('🎤 المكالمة الصوتية نشطة - تحدث الآن');
+            }
+
+            function endVoiceCall() {
+                voiceSessionActive = false;
+                voiceLoopActive = false;
+
+                if (recognition) {
+                    try { recognition.abort(); } catch (e) { /* ignore */ }
+                    recognition = null;
+                }
+
+                if (audioPlayer) {
+                    audioPlayer.pause();
+                    audioPlayer.src = '';
+                    audioPlayer = null;
+                }
+
+                isSpeaking = false;
+                voiceOrb.className = 'voice-orb';
+                voiceStatus.textContent = 'انتهت المكالمة';
+                voiceToggleBtn.disabled = false;
+                voiceEndBtn.disabled = true;
+                voiceToggleBtn.innerHTML = '<i class="fas fa-play"></i> بدء المكالمة';
+
+                if (voiceAbortController) {
+                    voiceAbortController.abort();
+                    voiceAbortController = null;
+                }
+
+                showToast('📴 تم إنهاء المكالمة الصوتية');
+            }
+
+            function toggleVoiceCall() {
+                if (voiceSessionActive) {
+                    endVoiceCall();
+                } else {
+                    startVoiceCall();
+                }
+            }
+
+            // ---- Voice UI events ----
+            voiceOrb.addEventListener('click', () => {
+                if (!voiceSessionActive) {
+                    startVoiceCall();
+                } else {
+                    // if listening, just re-trigger
+                    if (!isSpeaking && recognition) {
+                        try { recognition.abort(); } catch (e) { /* ignore */ }
+                        setTimeout(() => { if (voiceSessionActive) startListening(); }, 200);
+                    }
+                }
+            });
+
+            voiceOrb.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    voiceOrb.click();
+                }
+            });
+
+            voiceToggleBtn.addEventListener('click', toggleVoiceCall);
+
+            voiceEndBtn.addEventListener('click', () => {
+                if (voiceSessionActive) endVoiceCall();
+            });
+
+            voiceClearBtn.addEventListener('click', () => {
+                voiceTranscript.innerHTML = '';
+                addTranscriptLine('🤖 سيلتك', '🧹 تم مسح المحادثة. ابدأ من جديد.');
+                transcriptLines = [];
+            });
+
+            // ---- Cleanup on page unload ----
+            window.addEventListener('beforeunload', () => {
+                if (voiceSessionActive) endVoiceCall();
+            });
+
+            // ---- Keyboard shortcut: Ctrl+Enter to send ----
+            chatInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    sendMessage(chatInput.value);
+                }
+            });
+
+            // ---- Focus chat on load ----
+            chatInput.focus();
+
+            console.log('🧬 CellTek AI loaded · NVIDIA Llama backend');
+            console.log('📞 Voice mode requires Chrome/Edge with microphone permission.');
+
+        })();
+    </script>
+
 </body>
 </html>
